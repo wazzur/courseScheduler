@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">courseScheduler</string>
+    <string name ="test"> test </string>
+    <string name = "testView"> TestView </string>
+	<string name ="credBtn"> setCredits </string>
+</resources>
