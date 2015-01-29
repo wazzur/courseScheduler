@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">courseScheduler</string>
+    <string name ="test">test</string>
+    <string name = "testView">GPA: 0.0</string>
+	<string name ="credBtn">MinCredits: 12</string>
+	<string name ="schedule">Create Schedule</string>
+	<string name="img">Florida State University</string>
+	<string name="gradePrompt">Input Grade: </string>
+	<string name="info">Class Info</string>
+	<string name="hint">Letter grade</string>
+	
+</resources>
