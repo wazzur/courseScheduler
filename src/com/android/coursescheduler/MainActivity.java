@@ -10,9 +10,11 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.database.sqlite.SQLiteDatabase;
 import android.text.Editable;
 import android.util.Log;
 import android.view.Gravity;
@@ -36,14 +38,17 @@ import android.widget.TextView;
 	LinearLayout.LayoutParams LP;	// LP = Layout Parameters
 	Button cb, b, makeSched;	// credits button, general class button, and make schedule buttons
 	GradientDrawable d;
+    SQLiteDatabase DB;
 	boolean sExist;		// to check if schedule exists to remake.
 				
     protected void onCreate(Bundle savedInstanceState) {
+
+        //Log.e("DEBUG", c.getString(c.getColumnIndex("pk_major")) + c.getString(c.getColumnIndex("c_major_name")));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
+
         initialize();    // initializes necessary variables
-     
+
         
         //credits button
         cb.setOnClickListener(new View.OnClickListener() {
@@ -97,6 +102,40 @@ import android.widget.TextView;
 
 	private void initialize() {
 		//initialize necessary variables
+        DB = this.openOrCreateDatabase("POCKETADVISOR", MODE_PRIVATE, null);
+
+        DB.execSQL("CREATE TABLE IF NOT EXISTS MAJORS (pk_major INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "c_major_name CHAR(100) NOT NULL);");
+
+        DB.execSQL("CREATE TABLE IF NOT EXISTS COURSES (pk_course INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "fk_major INTEGER NOT NULL, c_course_name CHAR(255) NOT NULL, c_course_code CHAR(7) NOT NULL, " +
+                "i_credits INTEGER NOT NULL, b_gordan_rule INTEGER NOT NULL, b_literature INTEGER NOT NULL, b_x_requirement INTEGER, " +
+                "b_y_requirement INTEGER NOT NULL);");
+
+        DB.execSQL("CREATE TABLE IF NOT EXISTS SCHEDULE (pk_schedule INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "fk_course INTEGER NOT NULL, c_semester CHAR(10) NOT NULL, c_letter_grade CHAR(2), b_taken INTEGER NOT NULL);");
+
+        DB.execSQL("CREATE TABLE IF NOT EXISTS COREQS (pk_coreq INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "fk_course INTEGER NOT NULL, fk_course_coreq INTEGER NOT NULL);");
+
+        DB.execSQL("CREATE TABLE IF NOT EXISTS PREREQS (pk_prereq INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "fk_course INTEGER NOT NULL, fk_course_prereq INTEGER NOT NULL);");
+
+
+        Cursor c = DB.rawQuery("Select * from MAJORS", null);
+        //DB.execSQL("DELETE FROM MAJORS");
+        //DB.execSQL("DELETE FROM sqlite_sequence where name='MAJORS'");
+
+        if(c != null) {
+            if(c.getCount() <= 0)
+            {
+                DB.execSQL("INSERT INTO MAJORS"
+                        + " (c_major_name)"
+                        + " VALUES ('Computer Science');");
+            }
+
+        }
+
         makeSched = (Button) findViewById(R.id.makeSchedule);
         LP = new LinearLayout.LayoutParams(
 	            LinearLayout.LayoutParams.WRAP_CONTENT,
@@ -254,7 +293,7 @@ import android.widget.TextView;
     	
 
     	String str="";
-    	StringBuffer buf = new StringBuffer();			
+    	StringBuffer buf = new StringBuffer();
     	// finds file in raw folder under the name of "data"
     	InputStream is = this.getResources().openRawResource(R.raw.data);	
     	BufferedReader reader = new BufferedReader(new InputStreamReader(is));
