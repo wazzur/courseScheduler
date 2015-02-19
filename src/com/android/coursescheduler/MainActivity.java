@@ -38,7 +38,7 @@ import android.widget.TextView;
 	LinearLayout.LayoutParams LP;	// LP = Layout Parameters
 	Button cb, b, makeSched;	// credits button, general class button, and make schedule buttons
 	GradientDrawable d;
-    SQLiteDatabase DB;
+    Database DB;
 	boolean sExist;		// to check if schedule exists to remake.
 				
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,30 +102,11 @@ import android.widget.TextView;
 
 	private void initialize() {
 		//initialize necessary variables
-        DB = this.openOrCreateDatabase("POCKETADVISOR", MODE_PRIVATE, null);
 
-        DB.execSQL("CREATE TABLE IF NOT EXISTS MAJORS (pk_major INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "c_major_name CHAR(100) NOT NULL);");
-
-        DB.execSQL("CREATE TABLE IF NOT EXISTS COURSES (pk_course INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "fk_major INTEGER NOT NULL, c_course_name CHAR(255) NOT NULL, c_course_code CHAR(7) NOT NULL, " +
-                "i_credits INTEGER NOT NULL, b_gordan_rule INTEGER NOT NULL, b_literature INTEGER NOT NULL, b_x_requirement INTEGER, " +
-                "b_y_requirement INTEGER NOT NULL);");
-
-        DB.execSQL("CREATE TABLE IF NOT EXISTS SCHEDULE (pk_schedule INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "fk_course INTEGER NOT NULL, c_semester CHAR(10) NOT NULL, c_letter_grade CHAR(2), b_taken INTEGER NOT NULL);");
-
-        DB.execSQL("CREATE TABLE IF NOT EXISTS COREQS (pk_coreq INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "fk_course INTEGER NOT NULL, fk_course_coreq INTEGER NOT NULL);");
-
-        DB.execSQL("CREATE TABLE IF NOT EXISTS PREREQS (pk_prereq INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                "fk_course INTEGER NOT NULL, fk_course_prereq INTEGER NOT NULL);");
-
-
-        Cursor c = DB.rawQuery("Select * from MAJORS", null);
+        //Cursor c = DB.rawQuery("Select * from MAJORS", null);
         //DB.execSQL("DELETE FROM MAJORS");
         //DB.execSQL("DELETE FROM sqlite_sequence where name='MAJORS'");
-
+        /*
         if(c != null) {
             if(c.getCount() <= 0)
             {
@@ -135,6 +116,7 @@ import android.widget.TextView;
             }
 
         }
+        */
 
         makeSched = (Button) findViewById(R.id.makeSchedule);
         LP = new LinearLayout.LayoutParams(

@@ -21,39 +21,48 @@ public class Database extends SQLiteOpenHelper {
 	  
 	  //creates courses table if it doesn't exist
       private static final String COURSES_CREATE = "CREATE TABLE IF NOT EXISTS COURSES " +
-                   " (_id           INT PRIMARY KEY, " + 
-                   " MAJOR_ID            INT     , " +
-                   " NAME            VARCHAR(20)     NOT NULL, " + 
-                   " CODE            VARCHAR(20)     NOT NULL, " + 
-                   " CREDITS            INT     NOT NULL, " + 
-                   " FOREIGN KEY (MAJOR_ID) REFERENCES MAJORS(_id));"; 
+                   "(pk_course_id    TEXT PRIMARY KEY , " +
+                   " c_course_name   TEXT     NOT NULL, " +
+                   " i_credits       INTEGER  NOT NULL, " +
+                   " c_semester      TEXT);";
+                   //" b_gordan_rule   INTEGER          , " +
+                   //" b_literature    INTEGER          , " +
+                   //" b_y_requirement INTEGER          , " +
+                   //" b_x_requirement INTEGER          );";
       
       //creates majors table if it doesn't exist
       private static final String MAJORS_CREATE = "CREATE TABLE IF NOT EXISTS MAJORS " +
-              " (_id INTEGER PRIMARY KEY, " + 
-              " NAME			VARCHAR(20)		NOT NULL);"; 
+              "(pk_major     INTEGER PRIMARY KEY NOT NULL, " +
+              " c_major_name TEXT    NOT NULL           ); ";
       
       //etc...
       private static final String SCHEDULE_CREATE = "CREATE TABLE IF NOT EXISTS SCHEDULE " +
-              " (_id           INT PRIMARY KEY, " + 
-              " COURSE_ID            INT     NOT NULL, " +
-              " GRADE            VARCHAR(20)     NOT NULL, " + 
-              " TAKEN            INT     NOT NULL, " + 
-              " FOREIGN KEY (COURSE_ID) REFERENCES COURSES(_id));"; 
+              "(pk_schedule     INTEGER PRIMARY KEY AUTOINCREMENT, " +
+              " fk_course_id    INTEGER             NOT NULL     , " +
+              " c_grade         TEXT                NOT NULL     , " +
+              " b_taken         INTEGER             NOT NULL     , " +
+              " FOREIGN KEY (fk_course_id) REFERENCES COURSES(pk_course_id));";
       
       private static final String PREREQS_CREATE = "CREATE TABLE IF NOT EXISTS PREREQS " +
-              " (_id           INT PRIMARY KEY, " + 
-              " COURSE_ID            INT     NOT NULL, " +
-              " PREREQ_COURSE_ID            INT     NOT NULL, " + 
-              " FOREIGN KEY (COURSE_ID) REFERENCES COURSES(_id), " +
-              " FOREIGN KEY (PREREQ_COURSE_ID) REFERENCES COURSES(_id));"; 
+              "(pk_prereq           INTEGER PRIMARY KEY AUTOINCREMENT, " +
+              " fk_course_id        TEXT    NOT NULL                 , " +
+              " fk_prereq_id        TEXT    NOT NULL                 , " +
+              " FOREIGN KEY (fk_course_id) REFERENCES COURSES(pk_course_id), " +
+              " FOREIGN KEY (fk_prereq_id) REFERENCES COURSES(pk_course_id));";
       
       private static final String COREQS_CREATE = "CREATE TABLE IF NOT EXISTS COREQS " +
-              " (_id           INT PRIMARY KEY, " + 
-              " COURSE_ID            INT     NOT NULL, " +
-              " COREQ_COURSE_ID            INT     NOT NULL, " + 
-              " FOREIGN KEY (COURSE_ID) REFERENCES COURSES(_id), " +
-              " FOREIGN KEY (COREQ_COURSE_ID) REFERENCES COURSES(_id));"; 
+              "(pk_coreq      INTEGER PRIMARY KEY AUTOINCREMENT, " +
+              " fk_course_id  INTEGER NOT NULL                 , " +
+              " fk_coreq_id   INTEGER NOT NULL                 , " +
+              " FOREIGN KEY (fk_course_id) REFERENCES COURSES(pk_course_id), " +
+              " FOREIGN KEY (fk_coreq_id) REFERENCES COURSES(pk_course_id));";
+
+      private static final String MAJOR_COURSE_ASSOCIATON = "CREATE TABLE IF NOT EXISTS MAJOR_COURSE_ASSOCIATION " +
+              "(pk_major_course_association INTEGER PRIMARY KEY AUTOINCREMENT, " +
+              " fk_major                    INTEGER NOT NULL                 , " +
+              " fk_course_id                TEXT    NOT NULL                 , " +
+              " FOREIGN KEY (fk_major) REFERENCES MAJORS(pk_major)           , " +
+              " FOREIGN KEY (fk_course_id) REFERENCES COURSES(pk_course_id));  ";
                    
 
       //constructor, creates database in app
@@ -70,6 +79,7 @@ public class Database extends SQLiteOpenHelper {
 	    database.execSQL(SCHEDULE_CREATE);
 	    database.execSQL(PREREQS_CREATE);
 	    database.execSQL(COREQS_CREATE);
+        database.execSQL(MAJOR_COURSE_ASSOCIATON);
 	  }
 
 	  //automatically called when the database version is incremented, we don't use it...yet...
@@ -92,35 +102,43 @@ public class Database extends SQLiteOpenHelper {
 	  
 	  public void addMajor(String name)
 	  {
-		  String stmt = "INSERT INTO MAJORS (NAME) VALUES" +
+		  String stmt = "INSERT INTO MAJORS (c_major_name) VALUES" +
 	              " ('" + name + "');";
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  db.execSQL(stmt);
 	  }
 	  
-	  public void addCourse(int major_id, String name, String code, int credits)
+	  public void addCourse(String major_id, String name, int credits, String semester)
 	  {
-		  String stmt = "INSERT INTO COURSES (MAJOR_ID, NAME, CODE, CREDITS) VALUES" +
-	              " ('" + major_id + "', '" + name + "', '" + code + "', '" + credits + "');";
+		  String stmt = "INSERT INTO COURSES (pk_major_id, c_major_name, i_credits, c_semester) VALUES" +
+	              " ('" + major_id + "', '" + name + "', '" + credits + "', '" + semester + "');";
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  db.execSQL(stmt);
 	  }
 	  
-	  public void addPrereq(int course_id, int prereq_id)
+	  public void addPrereq(String course_id, String prereq_id)
 	  {
-		  String stmt = "INSERT INTO PREREQS (COURSE_ID, PREREQ_COURSE_ID) VALUES" +
+		  String stmt = "INSERT INTO PREREQS (fk_course_id, fk_prereq_id) VALUES" +
 	              " ('" + course_id + "', '" + prereq_id + ");";
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  db.execSQL(stmt);
 	  }
 	  
-	  public void addCoreq(int course_id, int coreq_id)
+	  public void addCoreq(String course_id, String coreq_id)
 	  {
-		  String stmt = "INSERT INTO COREQS (COURSE_ID, COREQ_COURSE_ID) VALUES" +
+		  String stmt = "INSERT INTO COREQS (fk_course_id, fk_coreq_id) VALUES" +
 	              " ('" + course_id + "', '" + coreq_id + ");";
 		  SQLiteDatabase db = this.getWritableDatabase();
 		  db.execSQL(stmt);
 	  }
+
+      public void addMajorCourseAssociaton(int pk_major, String course_id)
+      {
+          String stmt = "INSERT INTO MAJOR_COURSE_ASSOCIATION (fk_major, fk_course_id) VALUES " +
+                  "('" + pk_major + "', '" + course_id + "');";
+          SQLiteDatabase db = this.getWritableDatabase();
+          db.execSQL(stmt);
+      }
 	  
 	  
 	  
