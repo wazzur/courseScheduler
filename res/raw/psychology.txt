@@ -1,0 +1,38 @@
+BSCX0XX	3	GeneralBiology	fall/spring/summer	none	none
+PSY2012	3	GeneralPsychology	fall/spring/summer	none	none
+STA2122	3	Statistics	fall/summer/spring	MAC1105	none
+PSY20XX	3	LowLevelPsychology	fall/spring	none	none
+XXX1120	4	ForeignLangI	fall/spring/summer	none	none
+XXX1121	4	ForeignLangII	fall/spring/summer	XXX1120	none
+XXX2220	4	ForeignLangIII	fall/spring/summer	XXX1121	none
+Group1	1
+PSY3213c	4	ResearchMethodsInPsychology	fall/summer/spring PSY2012	STA2122
+Group2	1
+PSB2000	3	BrainAndBehavior	fall/spring/summer	none	none
+PSB4461	3	HormonesAndBehavior		falll	PSY2012,PSB2000 none
+EXP3203c	4	AnimalSensoryProcesses	falll	PSY3213c	none
+PSB3004c	4	PhysiologicalPsychology falll	PSY3213c	none
+EXP3202c	4	SensationandPerception	falll	PSY3213c	none
+Group3	2
+SOP3004	3	SocialPsychology	fall/spring/summer	none	none
+EXP2020	3	MindAndCognition	fall/spring/summer	none	none
+EXP4640	3	PsychologyOfLanguage	spring	PSY2012	none
+EXP4404	3	HumanMemoryAndLearning	fall	PSY2012	none
+EXP3604c	4	CognitivePsychology		fall/spring/summer PSY3213c	none
+DEP3101	3 ChildPsychology	fall/spring/summer	PSY2012	none
+Group4	2
+PSB3004c	4	PhysiologicalPsychology falll	PSY3213c	none
+EXP3202c	4	SensationandPerception	falll	PSY3213c	none
+EXP3422c	4	ConditioningAndLearning	fall/spring/summer	PSY3213c	none
+EXP3604c	4	CognitivePsychology		fall/spring/summer PSY3213c	none
+Group5
+//Psychology electives 14-21 hours
+MinorCoursework	
+//Minor coursework 12-18 hours
+ComputerSkillsCompetency
+//One Course
+OralCompetency
+//Notes:
+//For the groups, it is group number followed by amount of courses required in that
+//group. If the course catalogue did not have when the courses were regularly offered,
+//I listed it as fall with 3 l's
