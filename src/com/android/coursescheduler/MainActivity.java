@@ -277,7 +277,8 @@ import android.widget.TextView;
     	String str="";
     	StringBuffer buf = new StringBuffer();
     	// finds file in raw folder under the name of "data"
-    	InputStream is = this.getResources().openRawResource(R.raw.data);	
+    	int file = R.raw.computer_science;
+    	InputStream is = this.getResources().openRawResource(file);	
     	BufferedReader reader = new BufferedReader(new InputStreamReader(is));
     	
     	if (is!=null) {	
