@@ -1,12 +1,6 @@
 package com.android.coursescheduler;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Scanner;
-
-import android.util.Log;
 
 public class Schedule {
 
@@ -14,36 +8,15 @@ public class Schedule {
 	private Class schedule[][];
 	
 	Schedule(String data){
+		String classData[] = data.split("\\r?\\n"); // divides data by lines
 		classes = new Class[0];
 		// sorted incrementally by requirement height & relevance.
-		setData(data);	// sets up classes with file-contents data passed in data
+		setData(classData);	// sets up classes with file-contents data passed in data
 		sort();		// organizes the classes based on their pre/co-reqs
 	}
-	
-	/*
-	public String ListClasses(){
-		//lists returns a string of all classes and all credits in a semester
-		String c ="";
-		int total = 0;
-		for(int i=0; i< classes.length; i++){	
-			c += printClass(classes[i]) + "\n";
-			total += classes[i].getCred();
-		}
-		c += "Total credits this semester: " + total + "\n";
-		return c;
-	}
-	
-	public String ListClasses(Class array[]){
-		if(array == null){	return null;	}
-		String c ="";
-		for(int i=0; i< array.length; i++)
-		{	c = c + printClass(array[i]) + "\n";	}
-		return c;
-	}
-	*/
-	
-	void sort(){	// sorts classes by height first (making this the secondary priority)		
-		int min;	// then by relevance, ensuring relevance will be main priority
+
+	public void sort(){	// sorts classes by height first (making this the secondary priority)		
+		int nextCourse;	// then by relevance, ensuring relevance will be main priority
 		
 		// finds the relevance of each class.
 		for(int i=0; i<classes.length; i++){
@@ -53,16 +26,16 @@ public class Schedule {
 		// sorts data by height
 		// height is the longest chain of requirements each class is attached to.
 		for(int i=0; i<classes.length-1; i++){
-			min =i;
+			nextCourse =i;
 			for(int j=i+1; j<classes.length; j++){
-				if(height(classes[j].getCode()) < height(classes[min].getCode())){
-					min = j;
+				if(height(classes[j].getCode()) < height(classes[nextCourse].getCode())){
+					nextCourse = j;
 				}
 			}
-			if(min != i){
+			if(nextCourse != i){
 				Class c = classes[i];
-				classes[i] = classes[min];
-				classes[min] = c;
+				classes[i] = classes[nextCourse];
+				classes[nextCourse] = c;
 			}
 		}
 		
@@ -70,16 +43,16 @@ public class Schedule {
 		// relevance is the amount of other classes requiring an individual 
 		// 		class in any chain of requirements
 		for(int i=0; i<classes.length-1; i++){
-			min =i;
+			nextCourse =i;
 			for(int j=i+1; j<classes.length; j++){
-				if(classes[j].getRel() < classes[min].getRel()){
-					min = j;
+				if(classes[j].getRel() < classes[nextCourse].getRel()){
+					nextCourse = j;
 				}
 			}
-			if(min != i){
+			if(nextCourse != i){
 				Class c = classes[i];
-				classes[i] = classes[min];
-				classes[min] = c;
+				classes[i] = classes[nextCourse];
+				classes[nextCourse] = c;
 			}
 		}
 	}
@@ -195,16 +168,16 @@ public class Schedule {
 	public Class[][] makeSchedule(int credits){
 		//creates and returns a matrix representing a schedule.
 		// each line represents a semester of classes
-		int semstr = 0;
-		int semCount =0;
-		schedule = new Class[50][];	// creates a large matrix to later be resized	
+		int currentSemester = 0;
+		int semesterCounter =0;
+		schedule = new Class[100][];	// creates a large matrix to later be resized	
 		// loops until all classes are taken
 		while(!allTaken(classes)){
-			Class sem[] = getSemester(credits, semstr);	// finds next consecutive semester
-			semstr++;	// represents time semesters passing
-			semstr%=2;	// mods value to adjust to account for fall + spring (TODO: add summer)
-			schedule[semCount] = sem;	// assigns semester to appropriate array location in matrix
-			semCount++;	//increases schedule semester
+			Class sem[] = getSemester(credits, currentSemester);	// finds next consecutive semester
+			currentSemester++;	// represents time semesters passing
+			currentSemester%=2;	// mods value to adjust to account for fall + spring (TODO: add summer)
+			schedule[semesterCounter] = sem;	// assigns semester to appropriate array location in matrix
+			semesterCounter++;	//increases schedule semester
 		}
 		schedule = resize(schedule);	// resizes matrix to remove nulls
 		return schedule;		// returns schedule
@@ -247,21 +220,21 @@ public class Schedule {
 		// decides and returns an array of classes determining the next semester
 		if(allTaken(classes)){	return null;	}
 		Class semester[] = new Class[1];	// creates a growing array
-		Class n = nextClass(semester, term);	// finds first element
-		if(n == null){	return null;	}		// ensures first element was found
-		semester[0] = n;			// sets first element
-		int curCred = n.getCred();			// sets current credits for semester
+		Class next = nextClass(semester, term);	// finds first element
+		if(next == null){	return null;	}		// ensures first element was found
+		semester[0] = next;			// sets first element
+		int semesterCredits = next.getCred();			// sets current credits for semester
 		
 		// loops while credits do not exceed credits per semester and all classes are not taken
-		while(curCred < credits && !allTaken(classes)){
-			n = nextClass(semester, term);		// finds next class
-			if(n == null){break;}	// breaks if no class was found
+		while(semesterCredits < credits && !allTaken(classes)){
+			next = nextClass(semester, term);		// finds next class
+			if(next == null){break;}	// breaks if no class was found
 			Class[] temp = semester;		// adds class to semester array
 			semester = new Class[temp.length+1];
 			for(int i=0; i<temp.length; i++){	semester[i]=temp[i];	}
-			semester[temp.length] = n;	
+			semester[temp.length] = next;	
 			
-			curCred += n.getCred();	// increments credits
+			semesterCredits += next.getCred();	// increments credits
 		}
 		for(int i=0; i<semester.length; i++){
 			toClass(semester[i].getCode()).setTaken(true);	// sets class to taken
@@ -304,9 +277,8 @@ public class Schedule {
 		classes[temp.length] = c;
 	}
 	
-	void setData(String data){
+	void setData(String[] classData){
 		// sets all classData values
-		String classData[] = data.split("\\r?\\n"); // divides data by lines
 		for(int i=0; i<classData.length; i++){ // calls "addClass" for each line
 			addClass(makeClass(classData[i]));	
 		}
