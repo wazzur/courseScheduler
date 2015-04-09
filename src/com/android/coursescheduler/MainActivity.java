@@ -103,12 +103,12 @@ import android.widget.TextView;
 	private void initialize() {
 		//initialize necessary variables
 
-        DB = new Database(this); //Initialize the datavase
-        DB.clearTables();
+        database = new Database(this); //Initialize the datavase
+        database.clearTables();
         Log.e("DEBUG", "Init DB");
         try {
-            if (!DB.isInitialized())
-                DB.readData(this);
+            if (!database.isInitialized())
+                database.readData(this);
         }
         catch (IOException e)
         {
