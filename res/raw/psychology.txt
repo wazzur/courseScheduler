@@ -18,4 +18,4 @@ C	FL2
 C	FL3
 C	CCompetency
 C	OCompetency
-Minor		// also unsupported at this time, yet important
+Minor
