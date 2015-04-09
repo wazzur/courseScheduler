@@ -103,20 +103,17 @@ import android.widget.TextView;
 	private void initialize() {
 		//initialize necessary variables
 
-        //Cursor c = DB.rawQuery("Select * from MAJORS", null);
-        //DB.execSQL("DELETE FROM MAJORS");
-        //DB.execSQL("DELETE FROM sqlite_sequence where name='MAJORS'");
-        /*
-        if(c != null) {
-            if(c.getCount() <= 0)
-            {
-                DB.execSQL("INSERT INTO MAJORS"
-                        + " (c_major_name)"
-                        + " VALUES ('Computer Science');");
-            }
-
+        DB = new Database(this); //Initialize the datavase
+        DB.clearTables();
+        Log.e("DEBUG", "Init DB");
+        try {
+            if (!DB.isInitialized())
+                DB.readData(this);
         }
-        */
+        catch (IOException e)
+        {
+            Log.e("IOException", e.toString());
+        }
 
         makeSched = (Button) findViewById(R.id.makeSchedule);
         LP = new LinearLayout.LayoutParams(
