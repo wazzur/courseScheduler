@@ -1,6 +1,6 @@
 MAC1105	3	CollegeAlgebra	fall/spring	none	none	none
 MAC1114	2	Trigonometry	fall/spring/summer	MAC1105	none	none
-MAC1140	3	Precalculus	fall/spring	none	none	none
+MAC1140	3	Precalculus	fall/spring	MAC1105	MAC1114	none
 COP3014	3	ProgrammingI	fall/spring	MAC1140	none	CCompetency
 MAC2312	4	CalculusII	fall/spring	MAC2311	none	none
 MAD2104	3	DiscreteMathI	fall	COP3014	none	none
