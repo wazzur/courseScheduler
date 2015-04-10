@@ -11,6 +11,7 @@ public class Class {
 	private String name;			// class name
 	private int relevance;			// relevance integer (private?)
 	private String grade;			// user grade
+    private String course_group;    // used to choose what electives are available
 	
 	Class(){	
 		//class constructor sets up a new blank class to be modified with functions
@@ -24,8 +25,9 @@ public class Class {
 		coreqs = new String[1];
 		coreqs[0] = "none";	
 		taken = false;
-		grade = null;
+		grade = "N/A";
 		relevance = 0;
+        course_group = "none";
 	}
 	
 	Class(int num){
@@ -40,8 +42,9 @@ public class Class {
 		coreqs = new String[1];
 		coreqs[0] = "none";	
 		taken = false;
-		grade = null;
+		grade = "N/A";
 		relevance = 0;
+        course_group = "none";
 	}
 	
 	static boolean checkNone(String s){
@@ -51,7 +54,7 @@ public class Class {
 			return true;	
 		}else{	return false;	}
 	}
-	
+
 	void addPrereq(String c){
 		// checks if class exists, otherwise creates and adds it to prereqs.
 		
@@ -136,6 +139,9 @@ public class Class {
 	String getGrade(){	return grade;	}
 	void setCredits(int c){	credits = c;	}
 	void setCode(String code){	courseCode = code;	}
+    void setPrereqs(String[] pre) { prereqs = pre;  }
+    void setCoreqs(String[] coreq) { coreqs = coreq; }
+    void setCourseGroup(String group) { course_group = group; }
 	int getCred(){	return credits;	}
 	String getCode(){	return courseCode;	}
 	String[] getPrereqs(){	return prereqs;	}
