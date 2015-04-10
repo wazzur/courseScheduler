@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 public class Database extends SQLiteOpenHelper {
 
@@ -49,7 +50,7 @@ public class Database extends SQLiteOpenHelper {
       //etc...
       private static final String SCHEDULE_CREATE = "CREATE TABLE IF NOT EXISTS SCHEDULE " +
               "(pk_schedule     INTEGER PRIMARY KEY AUTOINCREMENT, " +
-              " fk_course_id    INTEGER             NOT NULL     , " +
+              " fk_course_id    TEXT             NOT NULL     , " +
               " c_grade         TEXT                NOT NULL     , " +
               " b_taken         INTEGER             NOT NULL     , " +
               " FOREIGN KEY (fk_course_id) REFERENCES COURSES(pk_course_id));";
@@ -63,12 +64,12 @@ public class Database extends SQLiteOpenHelper {
       
       private static final String COREQS_CREATE = "CREATE TABLE IF NOT EXISTS COREQS " +
               "(pk_coreq      INTEGER PRIMARY KEY AUTOINCREMENT, " +
-              " fk_course_id  INTEGER NOT NULL                 , " +
-              " fk_coreq_id   INTEGER NOT NULL                 , " +
+              " fk_course_id  TEXT NOT NULL                 , " +
+              " fk_coreq_id   TEXT NOT NULL                 , " +
               " FOREIGN KEY (fk_course_id) REFERENCES COURSES(pk_course_id), " +
               " FOREIGN KEY (fk_coreq_id) REFERENCES COURSES(pk_course_id));";
 
-      private static final String MAJOR_COURSE_ASSOCIATON = "CREATE TABLE IF NOT EXISTS MAJOR_COURSE_ASSOCIATION " +
+      private static final String MAJOR_COURSE_ASSOCIATION = "CREATE TABLE IF NOT EXISTS MAJOR_COURSE_ASSOCIATION " +
               "(pk_major_course_association INTEGER PRIMARY KEY AUTOINCREMENT, " +
               " fk_major                    INTEGER NOT NULL                 , " +
               " fk_course_id                TEXT    NOT NULL                 , " +
@@ -91,7 +92,7 @@ public class Database extends SQLiteOpenHelper {
 	    database.execSQL(SCHEDULE_CREATE);
 	    database.execSQL(PREREQS_CREATE);
 	    database.execSQL(COREQS_CREATE);
-        database.execSQL(MAJOR_COURSE_ASSOCIATON);
+        database.execSQL(MAJOR_COURSE_ASSOCIATION);
 
         //database.readData();
 	  }
@@ -218,6 +219,16 @@ public class Database extends SQLiteOpenHelper {
           }
       }
 
+      public void addCourseToSchedule(Class course)
+      {
+          String stmt = "INSERT INTO SCHEDULE " +
+                  "(fk_course_id, c_grade, b_taken) VALUES " +
+                  "('" + course.getCode() + "', 'N/A', 0);";
+
+          SQLiteDatabase db = this.getWritableDatabase();
+          db.execSQL(stmt);
+
+      }
 	  public void addCourse(String major_id, String name, int credits, String semester, String group)
 	  {
 		  String stmt = "INSERT INTO COURSES " +
@@ -371,7 +382,7 @@ public class Database extends SQLiteOpenHelper {
 	      }
 	      return courses[0];
 	   }
-	  
+
 	  //returns string array of all courses
 	  public String[] getCourses()
 	  {
@@ -390,45 +401,109 @@ public class Database extends SQLiteOpenHelper {
 	      
 	      return courses;
 	  }
-	  
+
+      public ArrayList<String[]> getCoursesByMajor(String major)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String fk_major = getFkMajor(major);
+
+          String[] fkMajor = {String.valueOf(fk_major)};
+          Cursor cursor =  db.rawQuery( "SELECT * FROM MAJOR_COURSE_ASSOCIATION WHERE fk_major = ?;", fkMajor );
+
+          cursor.moveToFirst();
+
+          ArrayList<String[]> courses = new ArrayList<String[]>();
+          String[] course_data = new String[2];
+
+          course_data[0] = cursor.getString(cursor.getColumnIndex("fk_course_id"));
+          course_data[1] = cursor.getString(cursor.getColumnIndex("c_course_group"));
+          courses.add(course_data);
+
+          for (int i = 1; i < cursor.getCount(); ++i)
+          {
+              cursor.moveToNext();
+              course_data = new String[2];
+              course_data[0] = cursor.getString(cursor.getColumnIndex("fk_course_id"));
+              course_data[1] = cursor.getString(cursor.getColumnIndex("c_course_group"));
+              courses.add(course_data);
+          }
+          return courses;
+      }
+
+      public int getCredits(String fk_course_id)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String[] pk_course_id = {String.valueOf(fk_course_id)};
+          Cursor cursor =  db.rawQuery( "SELECT i_credits FROM COURSES WHERE pk_course_id = ?;", pk_course_id);
+          cursor.moveToFirst();
+
+          return Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_credits")));
+      }
+
+      public String getCourseName(String fk_course_id)
+      {
+         SQLiteDatabase db = this.getReadableDatabase();
+         String[] pk_course_id = {String.valueOf(fk_course_id)};
+         Cursor cursor =  db.rawQuery( "SELECT c_course_name FROM COURSES WHERE pk_course_id = ?;", pk_course_id);
+         cursor.moveToFirst();
+
+         return cursor.getString(cursor.getColumnIndex("c_course_name"));
+      }
+
+      public String getSemester(String fk_course_id)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String[] pk_course_id = {String.valueOf(fk_course_id)};
+          Cursor cursor =  db.rawQuery( "SELECT c_semester FROM COURSES WHERE pk_course_id = ?;", pk_course_id);
+          cursor.moveToFirst();
+
+          return cursor.getString(cursor.getColumnIndex("c_semester"));
+      }
+
 	  //returns unique id of each prereq for the course passed in by unique id
-	  public String[] getPrereqs(int course_id)
+	  public String[] getPrereqs(String course_id)
 	  {
 		  SQLiteDatabase db = this.getReadableDatabase();
-		  String[] course = {String.valueOf(course_id)};
-	      Cursor res =  db.rawQuery( "SELECT * FROM PREREQS WHERE COURSE_ID = ?;", course );
+		  String[] fk_course_id = {String.valueOf(course_id)};
+	      Cursor cursor =  db.rawQuery( "SELECT * FROM PREREQS WHERE fk_course_id = ?;", fk_course_id );
 
-	      res.moveToFirst();
-	      res.getCount();
-	      String courses[] = new String[res.getCount()];
-	      courses[0] = res.getString(res.getColumnIndex("PREREQ_COURSE_ID"));
-	      for (int i = 1; i < res.getCount(); ++i)
-	      {
-	    	  res.moveToNext();
-	    	  courses[i] = res.getString(res.getColumnIndex("PREREQ_COURSE_ID"));
-	      }
-	      
-	      return courses;
+          if(cursor != null && cursor.getCount() > 0) {
+              cursor.moveToFirst();
+              String courses[] = new String[cursor.getCount()];
+              courses[0] = cursor.getString(cursor.getColumnIndex("fk_prereq_id"));
+              for (int i = 1; i < cursor.getCount(); ++i) {
+                  cursor.moveToNext();
+                  courses[i] = cursor.getString(cursor.getColumnIndex("fk_prereq_id"));
+              }
+
+              return courses;
+          }
+          else
+              return new String[]{"none"};
 	  }
 	  
 	  //returns unique id of each coereq for the course passed in by unique id
-	  public String[] getCoreqs(int course_id)
+	  public String[] getCoreqs(String course_id)
 	  {
 		  SQLiteDatabase db = this.getReadableDatabase();
 		  String[] course = {String.valueOf(course_id)};
-	      Cursor res =  db.rawQuery( "SELECT * FROM COREQS WHERE COURSE_ID = ?;", course );
+	      Cursor cursor =  db.rawQuery( "SELECT * FROM COREQS WHERE fk_course_id = ?;", course );
 
-	      res.moveToFirst();
-	      res.getCount();
-	      String courses[] = new String[res.getCount()];
-	      courses[0] = res.getString(res.getColumnIndex("COREQ_COURSE_ID"));
-	      for (int i = 1; i < res.getCount(); ++i)
-	      {
-	    	  res.moveToNext();
-	    	  courses[i] = res.getString(res.getColumnIndex("COREQ_COURSE_ID"));
-	      }
-	      
-	      return courses;
+          if(cursor != null && cursor.getCount() > 0) {
+              cursor.moveToFirst();
+              String courses[] = new String[cursor.getCount()];
+              courses[0] = cursor.getString(cursor.getColumnIndex("fk_coreq_id"));
+              for (int i = 1; i < cursor.getCount(); ++i) {
+                  cursor.moveToNext();
+                  courses[i] = cursor.getString(cursor.getColumnIndex("fk_coreq_id"));
+              }
+
+
+              return courses;
+          }
+          else {
+              return new String[]{"none"};
+          }
 	  }
 
 	} 
