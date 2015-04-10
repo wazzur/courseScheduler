@@ -138,7 +138,7 @@ import android.widget.TextView;
         	Log.e("data reading", e.toString());
         }       
         //creates the new schedule based on our contents
-        s  = new Schedule(contents);
+        s  = new Schedule("Computer Science", database);
 	}
 
 	void makeButtons(final Class[][] schedule){	 
