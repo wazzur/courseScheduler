@@ -15,12 +15,12 @@ import java.util.ArrayList;
 public class Database extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "tester.db";
-    private static final String[] MAJOR_NAMES = {"Computer Science", "Psychology"};
+    private static final String[] MAJOR_NAMES = {"General", "Computer Science", "Psychology"};
 
     private static final int DATABASE_VERSION = 1;
     private static final int CHOICE_ROW = 2;
     private static final int COURSE_FILE = R.raw.courses;
-    private static final int[] MAJOR_FILES= {R.raw.computer_science, R.raw.psychology};
+    private static final int[] MAJOR_FILES= {R.raw.gen_ed_courses, R.raw.computer_science, R.raw.psychology};
 
 
 
@@ -179,8 +179,8 @@ public class Database extends SQLiteOpenHelper {
                   addCourseAndRequisites(data_row);
                   Log.e("DEBUG","Added Course " + data_row[0]);
               }
-
           }
+          is.close();
           return;
       }
 

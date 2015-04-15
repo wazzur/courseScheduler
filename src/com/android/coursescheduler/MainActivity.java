@@ -130,15 +130,11 @@ import android.widget.TextView;
 		clearSchedule = false;	// nothing to clear first time making schedule.
 		credits = 12;	// standard schedule floor
         String contents ="";   	// empty file contents
-	
-        
-     // reads text file and stores contents in the string
-        try{	contents = readData();
-        } catch(IOException e){	//error
-        	Log.e("data reading", e.toString());
-        }       
+
         //creates the new schedule based on our contents
         s  = new Schedule("Computer Science", database);
+
+        s.makeSchedule(12);
 	}
 
 	void makeButtons(final Class[][] schedule){	 
@@ -266,25 +262,5 @@ import android.widget.TextView;
 		t.setText(txt);
 		tempLayout.addView(t, layoutParams);
 		semester++;
-    }
-    
-    public String readData() throws IOException {      
-    	// reads datafile and returns it as a string variable
-    	// TODO: CHANGE THIS TO READ FROM DATABASE
-    	
-    	
-    	String str="";
-    	StringBuffer buf = new StringBuffer();
-    	// finds file in raw folder under the name of "data"
-    	int file = R.raw.computer_science;
-    	InputStream is = this.getResources().openRawResource(file);	
-    	BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-    	
-    	if (is!=null) {	
-    		while ((str = reader.readLine()) != null) {	
-    			buf.append(str + "\n" );	
-    	}  	}		
-    	is.close();				  
-    	return buf.toString();
     }
 }

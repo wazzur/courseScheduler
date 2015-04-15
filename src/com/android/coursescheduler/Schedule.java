@@ -108,6 +108,11 @@ public class Schedule {
 			}
 			soFar = true;
 		}
+        if(!c.getSemester(semstr))
+            return false;
+        else
+            soFar = true;
+
 		//if(c.getSemester(semstr) || c.getSemester(2)){		// summer not included currently
 			return soFar;
 		//}else{
@@ -177,7 +182,7 @@ public class Schedule {
 		while(!allTaken(classes)){
 			Class sem[] = getSemester(credits, currentSemester);	// finds next consecutive semester
 			currentSemester++;	// represents time semesters passing
-			currentSemester%=2;	// mods value to adjust to account for fall + spring (TODO: add summer)
+			currentSemester%=3;	// mods value to adjust to account for fall + spring (TODO: add summer)
 			schedule[semesterCounter] = sem;	// assigns semester to appropriate array location in matrix
 			semesterCounter++;	//increases schedule semester
 		}
@@ -239,7 +244,10 @@ public class Schedule {
 			semesterCredits += next.getCred();	// increments credits
 		}
 		for(int i=0; i<semester.length; i++){
-			findClass(semester[i].getCode()).setTaken(true);	// sets class to taken
+            if(semester[i].getCode().equals("C"))
+                classes.get(getChoiceIndex(semester[i].getCourseGroup())).setTaken(true);
+            else
+			    classes.get(getIndex(semester[i].getCode())).setTaken(true);	// sets class to taken
 		}
 		
 		return semester;
@@ -249,7 +257,7 @@ public class Schedule {
 		// returns the next class in a sorted classes array 
 		// after verifying semester + co-existance
 		Class result = null;
-		for(int i=classes.size()-1; i>-1; i--){
+		for(int i= 0; i < classes.size(); i++){
 			if(verify(classes.get(i), semester, semstr)){
 				return classes.get(i);
 			}
@@ -283,9 +291,16 @@ public class Schedule {
 
         ArrayList<String[]> SQL_result = new ArrayList<String[]>();
 
-        SQL_result = database.getCoursesByMajor(major);
+        SQL_result = database.getCoursesByMajor("General");
 
 		// sets all classData values
+        for(int i=0; i<SQL_result.size(); i++){
+            classes.add((makeClass(SQL_result.get(i))));
+        }
+
+        SQL_result = database.getCoursesByMajor(major);
+
+        // sets all classData values
         for(int i=0; i<SQL_result.size(); i++){
             classes.add((makeClass(SQL_result.get(i))));
         }
@@ -299,7 +314,7 @@ public class Schedule {
             database.addCourseToSchedule(classes.get(i));
         }
     }
-		
+
 	Class makeClass(String[] course_data){
 		// creates class from specific data passed from textfile
 		// course_data[0] = pk_course_id
@@ -336,6 +351,32 @@ public class Schedule {
 		}
 		return null;	// none found
 	}
+
+    int getChoiceIndex(String courseGroup)
+    {
+        for(int i = 0; i < classes.size(); i++)
+        {
+            if(classes.get(i).getCourseGroup().equals(courseGroup) && !classes.get(i).isTaken())
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    int getIndex(String courseCode){
+        // returns respecting class variable of course code selected
+        if(courseCode.toLowerCase().contains("none") || courseCode == null){
+            return -1;	// nothing passed
+        }
+        for(int i=0; i<classes.size(); i++){
+            if(classes.get(i).getCode().toLowerCase().contains(courseCode.toLowerCase())){
+                return i;	//	 class found
+            }
+        }
+        return -1;	// none found
+    }
 	
 	int height(String s[]){
 		// finds the highest requirement class of array of classes
