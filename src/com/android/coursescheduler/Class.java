@@ -17,8 +17,8 @@ public class Class {
 		//class constructor sets up a new blank class to be modified with functions
 		name = "blank class";		// template class
 		semester = new boolean[3];	// fall, spring, summer
-		for(int i=0; i<3; i++){	semester[i]=false;	}
-		credits = 0;			// initialize credits
+		for(int i=0; i<3; i++){	semester[i]=true;	}
+		credits = 3;			// initialize credits
 		courseCode = "xxx0000";		// blank code
 		prereqs = new String[1];	
 		prereqs[0] = "none";
@@ -26,7 +26,7 @@ public class Class {
 		coreqs[0] = "none";	
 		taken = false;
 		grade = "N/A";
-		relevance = 0;
+		relevance = -10;
         course_group = "none";
 	}
 	
@@ -147,6 +147,7 @@ public class Class {
 	String[] getPrereqs(){	return prereqs;	}
 	String[] getCoreqs(){ return coreqs;	}
 	String	getCoreqs(int i){	return coreqs[i];	}
+    String getCourseGroup() { return course_group; }
 	String	getPrereqs(int i){	return prereqs[i];	}
 	boolean isTaken(){	return taken;	}
 	void setTaken(boolean t){	taken = t;	}
