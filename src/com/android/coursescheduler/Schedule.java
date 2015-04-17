@@ -109,9 +109,16 @@ public class Schedule {
 		}
 		if(!c.getPrereqs(0).toLowerCase().contains("none")){
 			for(int i=0; i<c.getPrereqs().length; i++){
-				if(!findClass(c.getPrereqs(i)).isScheduled()){
+                Class prereq = new Class();
+                prereq = findClass(c.getPrereqs(i));
+				if(!prereq.isScheduled()){
 					return false;
 				}
+                else if(contains(semester, prereq))
+                {
+                    return false;
+                }
+
 			}
 			soFar = true;
 		}
@@ -246,7 +253,8 @@ public class Schedule {
 		if(next == null){	return null;	}		// ensures first element was found
 		semester[0] = next;			// sets first element
 		int semesterCredits = next.getCred();			// sets current credits for semester
-		
+        updateScheduledStatus(next, semester_counter);
+
 		// loops while credits do not exceed credits per semester and all classes are not taken
 		while(semesterCredits < credits && !allTaken(classes)){
 			next = nextClass(semester, term);		// finds next class
@@ -254,29 +262,33 @@ public class Schedule {
 			Class[] temp = semester;		// adds class to semester array
 			semester = new Class[temp.length+1];
 			for(int i=0; i<temp.length; i++){	semester[i]=temp[i];	}
-			semester[temp.length] = next;
+
+            //Add update the taken flag in the array to mark the class as scheduled and update the
+            //semester in SCHEUDLE for the course
+            updateScheduledStatus(next, semester_counter);
+            semester[temp.length] = next;
 
 			semesterCredits += next.getCred();	// increments credits
 		}
-        //Add update the taken flag in the array to mark the class as scheduled and update the
-        //semester in SCHEUDLE for the course
-		for(int i=0; i<semester.length; i++){
-            if(semester[i].getCode().equals("C"))
+
+        return semester;
+	}
+
+    private void updateScheduledStatus(Class course, int semester_counter)
+    {
+            if(course.getCode().equals("C"))
             {
-                database.setSemesterChoice(semester_counter, semester[i].getCourseGroup());
-                classes.get(getChoiceIndex(semester[i].getCourseGroup())).setScheduled(true);
+                database.setSemesterChoice(semester_counter, course.getCourseGroup());
+                classes.get(getChoiceIndex(course.getCourseGroup())).setScheduled(true);
             }
             else
             {
-                database.setSemester(semester_counter, semester[i].getCode());
-                classes.get(getIndex(semester[i].getCode())).setScheduled(true);    // sets class to taken
+                database.setSemester(semester_counter, course.getCode());
+                classes.get(getIndex(course.getCode())).setScheduled(true);    // sets class to taken
             }
-		}
-		
-		return semester;
-	}
-	
-	Class nextClass(Class[] semester, int semstr){
+    }
+
+    Class nextClass(Class[] semester, int semstr){
 		// returns the next class in a sorted classes array 
 		// after verifying semester + co-existance
 		Class result = null;
