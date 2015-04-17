@@ -7,7 +7,8 @@ public class Class {
 	private boolean semester[];		// (0)fall, (1)spring, (2)summer
 	private String[] prereqs;		// prereq classes
 	private String[] coreqs;		// coreq classes
-	private boolean taken;			// has user taken class or not
+	private boolean scheduled;	    // scheduled class or not
+    private int taken;
 	private String name;			// class name
 	private int relevance;			// relevance integer (private?)
 	private String grade;			// user grade
@@ -24,10 +25,11 @@ public class Class {
 		prereqs[0] = "none";
 		coreqs = new String[1];
 		coreqs[0] = "none";	
-		taken = false;
+		scheduled = false;
 		grade = "N/A";
 		relevance = -10;
         course_group = "none";
+        taken = 0;
 	}
 	
 	Class(int num){
@@ -41,10 +43,11 @@ public class Class {
 		prereqs[0] = "none";
 		coreqs = new String[1];
 		coreqs[0] = "none";	
-		taken = false;
+		scheduled = false;
 		grade = "N/A";
 		relevance = 0;
         course_group = "none";
+        taken = 0;
 	}
 	
 	static boolean checkNone(String s){
@@ -149,9 +152,11 @@ public class Class {
 	String	getCoreqs(int i){	return coreqs[i];	}
     String getCourseGroup() { return course_group; }
 	String	getPrereqs(int i){	return prereqs[i];	}
-	boolean isTaken(){	return taken;	}
-	void setTaken(boolean t){	taken = t;	}
+    int isTaken() { return taken;}
+	boolean isScheduled(){	return scheduled;	}
+	void setScheduled(boolean t){	scheduled = t;	}
 	void setName(String n){	name = n;	}
+    void setTaken(int t) { taken = t; }
 	String getName(){	return name;	}
 	int getRel(){	return relevance;	}
 

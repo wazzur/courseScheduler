@@ -332,8 +332,37 @@ public class Database extends SQLiteOpenHelper {
           SQLiteDatabase db = this.getWritableDatabase();
           db.execSQL(stmt);
       }
-	  
-	  
+
+      public void populateCourseInfo(Class course)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String[] pk_course_id = {course.getCode()};
+
+          if(!course.getCode().contains("|"))
+          {
+              Cursor cursor = db.rawQuery("SELECT * FROM COURSES WHERE pk_course_id = ? LIMIT 1;", pk_course_id);
+
+              if(cursor != null && cursor.getCount() > 0)
+              {
+                  cursor.moveToFirst();
+                  course.setCredits(Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_credits"))));
+                  course.setName(cursor.getString(cursor.getColumnIndex("c_course_name")));
+                  course.setScheduled(true);
+                  course.setCoreqs(getCoreqs(course.getCode()));
+                  course.setPrereqs(getPrereqs(course.getCode()));
+                  course.setSemester(cursor.getString(cursor.getColumnIndex("c_semester")));
+              }
+          }
+          else
+          {
+              String [] course_group = new String[2];
+              course_group = course.getCode().split("\\|");
+
+              course.setCode("C");
+              course.setCourseGroup(course_group[1]);
+          }
+
+      }
 	  
 	  
 	  /*
@@ -483,6 +512,15 @@ public class Database extends SQLiteOpenHelper {
          return cursor.getString(cursor.getColumnIndex("c_course_name"));
       }
 
+      public int getSemesterCount()
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          Cursor cursor = db.rawQuery("SELECT MAX(i_semester) as i_semester FROM SCHEDULE", null);
+          cursor.moveToFirst();
+
+          return Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_semester")));
+      }
+
       public String getSemester(String fk_course_id)
       {
           SQLiteDatabase db = this.getReadableDatabase();
@@ -493,6 +531,45 @@ public class Database extends SQLiteOpenHelper {
           return cursor.getString(cursor.getColumnIndex("c_semester"));
       }
 
+      public Class[][] getFullSchedule(int total_semesters)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          Class[][] schedule = new Class[total_semesters][];
+          Class[] semester = new Class[1];
+
+          for(int i = 0; i < total_semesters; i++)
+          {
+              String[] i_semester = {String.valueOf(i)};
+              Cursor cursor = db.rawQuery("SELECT * FROM SCHEDULE WHERE i_semester = ?;", i_semester);
+
+              if(cursor != null && cursor.getCount() > 0)
+              {
+
+
+                  cursor.moveToFirst();
+                  semester = new Class[cursor.getCount()];
+
+                  for(int j = 0; j < cursor.getCount(); j++)
+                  {
+                      Class course = new Class();
+                      course.setCode(cursor.getString(cursor.getColumnIndex("fk_course_id")));
+                      course.setGrade(cursor.getString(cursor.getColumnIndex("c_grade")));
+                      course.setTaken(Integer.parseInt(cursor.getString(cursor.getColumnIndex("b_taken"))));
+                      populateCourseInfo(course);
+                      semester[j] = course;
+                      cursor.moveToNext();
+                  }
+              }
+              else
+              {
+                  semester = new Class[0];
+              }
+
+              schedule[i] = semester;
+          }
+
+          return schedule;
+      }
 	  //returns unique id of each prereq for the course passed in by unique id
 	  public String[] getPrereqs(String course_id)
 	  {
@@ -538,5 +615,12 @@ public class Database extends SQLiteOpenHelper {
               return new String[]{"none"};
           }
 	  }
+
+      public void clearSchedule()
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String stmt = "DELETE FROM SCHEDULE;";
+          db.execSQL(stmt);
+      }
 
 	} 

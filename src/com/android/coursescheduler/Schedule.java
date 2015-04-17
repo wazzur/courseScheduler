@@ -1,8 +1,6 @@
 package com.android.coursescheduler;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Schedule {
 
@@ -17,6 +15,17 @@ public class Schedule {
 		setData(major);	// sets up classes with file-contents data passed in data
 	}
 
+    Schedule(Database db)
+    {
+        database = db;
+        classes = new ArrayList<Class>();
+        int total_semesters = database.getSemesterCount();
+
+        schedule = new Class[total_semesters][];
+        schedule = database.getFullSchedule(total_semesters);
+    }
+
+    public Class[][] getSchedule() { return schedule; }
 	public void sort(ArrayList<Class> classes){	// sorts classes by height first (making this the secondary priority)
 		int nextCourse;	// then by relevance, ensuring relevance will be main priority
 		
@@ -86,7 +95,7 @@ public class Schedule {
 		// or is already taken, or has untaken requisites, and finally ensures correct semester.
 		
 		if(c == null){	return false;	}
-		if(c.isTaken()||contains(semester, c)){	return false;	}
+		if(c.isScheduled()||contains(semester, c)){	return false;	}
 		boolean soFar = false;
 		if(c.getCoreqs(0).toLowerCase().contains("none") 
 				&& c.getPrereqs(0).toLowerCase().contains("none")){
@@ -94,7 +103,7 @@ public class Schedule {
 		}
 		if(!c.getPrereqs(0).toLowerCase().contains("none")){
 			for(int i=0; i<c.getPrereqs().length; i++){
-				if(!findClass(c.getPrereqs(i)).isTaken()){
+				if(!findClass(c.getPrereqs(i)).isScheduled()){
 					return false;
 				}
 			}
@@ -102,7 +111,7 @@ public class Schedule {
 		}
 		if(!c.getCoreqs(0).toLowerCase().contains("none")){
 			for(int i=0; i<c.getCoreqs().length; i++){
-				if(!findClass(c.getCoreqs(i)).isTaken() && !contains(semester, c)){
+				if(!findClass(c.getCoreqs(i)).isScheduled() && !contains(semester, c)){
 					return false;
 				}
 			}
@@ -130,7 +139,7 @@ public class Schedule {
 	boolean allTaken(ArrayList<Class> array){
 		// returns true if all classes have been taken, false otherwise.
 		for(int i=0; i<array.size(); i++){
-			if(!array.get(i).isTaken()){
+			if(!array.get(i).isScheduled()){
 				return false;
 			}
 		}
@@ -180,7 +189,7 @@ public class Schedule {
 		schedule = new Class[100][];	// creates a large matrix to later be resized
 		// loops until all classes are taken
 		while(!allTaken(classes)){
-			Class sem[] = getSemester(credits, currentSemester);	// finds next consecutive semester
+			Class sem[] = getSemester(credits, currentSemester, semesterCounter);	// finds next consecutive semester
 			currentSemester++;	// represents time semesters passing
 			currentSemester%=3;	// mods value to adjust to account for fall + spring + summer
 			schedule[semesterCounter] = sem;	// assigns semester to appropriate array location in matrix
@@ -217,13 +226,13 @@ public class Schedule {
 		if(s != null){
 			for(int i=0; i<s.size(); i++){
 				if(s.get(i) != null){
-					s.get(i).setTaken(false);
+					s.get(i).setScheduled(false);
 				}
 			}
 		}
 	}
 
-	Class[] getSemester(int credits, int term){
+	Class[] getSemester(int credits, int term, int semester_counter){
 		// decides and returns an array of classes determining the next semester
 		if(allTaken(classes)){	return null;	}
 		Class semester[] = new Class[1];	// creates a growing array
@@ -248,13 +257,13 @@ public class Schedule {
 		for(int i=0; i<semester.length; i++){
             if(semester[i].getCode().equals("C"))
             {
-                database.setSemesterChoice(term, semester[i].getCourseGroup());
-                classes.get(getChoiceIndex(semester[i].getCourseGroup())).setTaken(true);
+                database.setSemesterChoice(semester_counter, semester[i].getCourseGroup());
+                classes.get(getChoiceIndex(semester[i].getCourseGroup())).setScheduled(true);
             }
             else
             {
-                database.setSemester(term, semester[i].getCode());
-                classes.get(getIndex(semester[i].getCode())).setTaken(true);    // sets class to taken
+                database.setSemester(semester_counter, semester[i].getCode());
+                classes.get(getIndex(semester[i].getCode())).setScheduled(true);    // sets class to taken
             }
 		}
 		
@@ -364,7 +373,7 @@ public class Schedule {
     {
         for(int i = 0; i < classes.size(); i++)
         {
-            if(classes.get(i).getCourseGroup().equals(courseGroup) && !classes.get(i).isTaken())
+            if(classes.get(i).getCourseGroup().equals(courseGroup) && !classes.get(i).isScheduled())
             {
                 return i;
             }
@@ -428,7 +437,11 @@ public class Schedule {
 		String[] pre = c.getPrereqs();
 		String[] co = c.getCoreqs();
 		String x =c.getCode();
-		x+="\n" +c.getName();	
+
+        if(x.equals("C"))
+            x+="\n" + c.getCourseGroup();
+        else
+		    x+="\n" +c.getName();
 		x+="\nCredits: " +c.getCred();
 		
 		x+="\nGrade: ";
@@ -449,7 +462,7 @@ public class Schedule {
 			if(i !=0){x+=", ";}
 			x+=co[i];
 		}
-		x+="\n";
+		x+="\n" + "DEBUG: RELEVANCE " + c.getRel();
 		
 		return x;
 	}

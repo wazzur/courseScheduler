@@ -1,20 +1,16 @@
 package com.android.coursescheduler;
 
 // imported files
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.database.sqlite.SQLiteDatabase;
 import android.text.Editable;
 import android.util.Log;
 import android.view.Gravity;
@@ -40,6 +36,7 @@ import android.widget.TextView;
 	GradientDrawable gDraw;
     Database database;
 	boolean clearSchedule;		// to check if schedule exists to remake.
+    boolean first_time_run;
 				
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -92,9 +89,13 @@ import android.widget.TextView;
 				if(clearSchedule){
 					layout.removeView(tempLayout);
 					s.reset();
+                    database.clearSchedule();
 				}
 				// makes schedule based on credits variable
-				makeButtons(s.makeSchedule(credits));
+                if(!first_time_run)
+                    s = new Schedule("Computer Science", database);
+
+                makeButtons(s.makeSchedule(credits));
 				clearSchedule = true;	// ensures schedule is cleared next time user clicks schedule
 			}
 		});
@@ -102,12 +103,15 @@ import android.widget.TextView;
 
 	private void initialize() {
 		//initialize necessary variables
-
-        database = new Database(this); //Initialize the datavase
-        database.clearTables();
+        database = new Database(this); //Initialize the database
+        if(database.isInitialized())
+            first_time_run = false;
+        else
+            first_time_run = true;
+        //database.clearTables();
         Log.e("DEBUG", "Init DB");
         try {
-            if (!database.isInitialized())
+            if (first_time_run)
                 database.readData(this);
         }
         catch (IOException e)
@@ -131,10 +135,16 @@ import android.widget.TextView;
 		credits = 12;	// standard schedule floor
         String contents ="";   	// empty file contents
 
-        //creates the new schedule based on our contents
-        s  = new Schedule("Computer Science", database);
+        if(first_time_run) {
+            s = new Schedule("Computer Science", database);
+        }
+        else
+        {
+            s = new Schedule(database);
+            makeButtons(s.getSchedule());
+        }
 
-        s.makeSchedule(12);
+
 	}
 
 	void makeButtons(final Class[][] schedule){	 
@@ -152,58 +162,69 @@ import android.widget.TextView;
     	
     	// iterates through the schedule to print the buttons to layout
     	// exit if schedule nulls for any reason, this should never happen
-    	for(int sem=0; sem<schedule.length; sem++){
-    		if(schedule[sem] == null){	break;	}	
-    		semBreak();								// creates a visual break between semesters
-	    	for(int course=0; course<schedule[sem].length; course++){	// iterates through each semester and prints
-	    		if(buttonCounter%2==0){	// corrects UI alignment if button ended in an odd number
-	    			row = new TableRow(this);
-	    			row.setPadding(5, 5, 5, 5);
-	    			row.setDividerDrawable(getWallpaper());
-	    		}
-	    		if(schedule[sem][course] != null){    			// verifies class existance
-		    		 courseButton = new Button(this);				// creates new button
-		             courseButton.setText(schedule[sem][course].getCode());    	// sets button name to class code
-		             courseButton.setId(course);						// sets button reference id
-		             courseButton.setGravity(Gravity.CENTER);		// centralizes button gravity
-		             courseButton.setBackground(gDraw);				// sets background
-		             row.addView(courseButton, 185, 115);			// adds button to our table row
-		             buttonCounter++;							// incremenets button counter
-		             
-		             // adds the row to the table
-		             if(buttonCounter%2==0 && buttonCounter != 0){	table.addView(row, layoutParams);	}
-		             
-		             //allows click-ability of dynamically creates buttons
-		             final int s=sem;
-		             final int c=course;
-		             courseButton.setOnClickListener(new View.OnClickListener() {
-						@Override
-						public void onClick(View v) {
-							classBtn(schedule[s][c]);
-						}
-					});
-	    		}
-	    	}	// corrects UI if necessary
-	    	if(buttonCounter%2==1){
-				courseButton = new Button(this);
-				courseButton.setVisibility(View.GONE);
-				row.addView(courseButton);
-				table.addView(row, layoutParams);	
-				buttonCounter++;
-    		}
-	    	tempLayout.addView(table, layoutParams);
-	    	table = new TableLayout(this);
-	    	table.setLayoutParams(new TableLayout.LayoutParams(10,2));
+    	for(int sem=0; sem<schedule.length; sem++) {
+            //if(schedule[sem] == null){	break;	}
+            semBreak();                                // creates a visual break between semesters
+            if(schedule[sem] != null)
+            {
+                for (int course = 0; course < schedule[sem].length; course++) {    // iterates through each semester and prints
+                    if (buttonCounter % 2 == 0) {    // corrects UI alignment if button ended in an odd number
+                        row = new TableRow(this);
+                        row.setPadding(5, 5, 5, 5);
+                        row.setDividerDrawable(getWallpaper());
+                    }
+                    if (schedule[sem][course] != null) {                // verifies class existance
+                        courseButton = new Button(this);                // creates new button
+
+                        if(schedule[sem][course].getCode().equals("C"))
+                            courseButton.setText(schedule[sem][course].getCourseGroup());
+                        else
+                            courseButton.setText(schedule[sem][course].getCode());        // sets button name to class code
+
+                        courseButton.setId(course);                        // sets button reference id
+                        courseButton.setGravity(Gravity.CENTER);        // centralizes button gravity
+                        courseButton.setBackground(gDraw);                // sets background
+                        row.addView(courseButton, 185, 115);            // adds button to our table row
+                        buttonCounter++;                            // incremenets button counter
+
+                        // adds the row to the table
+                        if (buttonCounter % 2 == 0 && buttonCounter != 0) {
+                            table.addView(row, layoutParams);
+                        }
+
+                        //allows click-ability of dynamically creates buttons
+                        final int s = sem;
+                        final int c = course;
+                        courseButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                classBtn(schedule[s][c]);
+                            }
+                        });
+                    }
+                }    // corrects UI if necessary
+                if (buttonCounter % 2 == 1) {
+                    courseButton = new Button(this);
+                    courseButton.setVisibility(View.GONE);
+                    row.addView(courseButton);
+                    table.addView(row, layoutParams);
+                    buttonCounter++;
+                }
+                tempLayout.addView(table, layoutParams);
+                table = new TableLayout(this);
+                table.setLayoutParams(new TableLayout.LayoutParams(10, 2));
+            }
     	}	// corrects UI if necessary
     	if(buttonCounter%2==1){
 			courseButton = new Button(this);
 			courseButton.setVisibility(View.GONE);
 			row.addView(courseButton);
-			table.addView(row, layoutParams);	
+			table.addView(row, layoutParams);
 			tempLayout.addView(table, layoutParams);
 		}
     	layout.addView(tempLayout, layoutParams);
     	addText("Graduation!");	// prints graduation message
+        clearSchedule = true;
     }
     
 	void classBtn(final Class c){
@@ -252,9 +273,10 @@ import android.widget.TextView;
     
     void semBreak(){
     	String txt;
-    	int c = (1+(semester/2));
-    	if(semester%2==0){	txt = "Fall Semester " + c;
-    	}else{	txt = "Spring Semester "+c;	}
+    	int c = (1+(semester/3));
+    	if(semester%3==0){	txt = "Fall Semester " + c;
+    	}else if(semester%3==1){	txt = "Spring Semester "+c;	}
+        else { txt = "Summer Semester "+c; }
     	TextView t = new TextView(this);
     	t.setPadding(75, 0, 0, 0);
     	t.setGravity(Gravity.CENTER);
