@@ -69,6 +69,11 @@ public class Schedule {
 	}
 	
 	void setRelevance(Class c){
+
+        if(c.getCode().equals("C")) {
+            c.setRelevance(-20);
+            return;
+        }
 		// calls appropriate relevance functions to direct the program further
 		// calls relevant function on requirements for class c.
 		if(c == null){	return;	}
@@ -78,6 +83,7 @@ public class Schedule {
 		if(!c.getCoreqs(0).toLowerCase().contains("none")){
 			relevant(c.getCoreqs());
 		}
+
 	}
 	
 	void relevant(String requisites[]){

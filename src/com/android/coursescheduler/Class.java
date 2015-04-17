@@ -27,7 +27,7 @@ public class Class {
 		coreqs[0] = "none";	
 		scheduled = false;
 		grade = "N/A";
-		relevance = -10;
+		relevance = 0;
         course_group = "none";
         taken = 0;
 	}
@@ -155,6 +155,7 @@ public class Class {
     int isTaken() { return taken;}
 	boolean isScheduled(){	return scheduled;	}
 	void setScheduled(boolean t){	scheduled = t;	}
+    void setRelevance(int r) { relevance = r; }
 	void setName(String n){	name = n;	}
     void setTaken(int t) { taken = t; }
 	String getName(){	return name;	}
