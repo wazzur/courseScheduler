@@ -53,6 +53,7 @@ public class Database extends SQLiteOpenHelper {
               " fk_course_id    TEXT             NOT NULL     , " +
               " c_grade         TEXT                NOT NULL     , " +
               " b_taken         INTEGER             NOT NULL     , " +
+              " i_semester      INTEGER                          , " +
               " FOREIGN KEY (fk_course_id) REFERENCES COURSES(pk_course_id));";
       
       private static final String PREREQS_CREATE = "CREATE TABLE IF NOT EXISTS PREREQS " +
@@ -221,14 +222,46 @@ public class Database extends SQLiteOpenHelper {
 
       public void addCourseToSchedule(Class course)
       {
+          String pk_course_code;
+
+          if (!course.getCode().equals("C")) {
+              pk_course_code = course.getCode();
+          }
+          else{
+              pk_course_code = course.getCode() + "|" + course.getCourseGroup();
+          }
+
           String stmt = "INSERT INTO SCHEDULE " +
                   "(fk_course_id, c_grade, b_taken) VALUES " +
-                  "('" + course.getCode() + "', 'N/A', 0);";
+                  "('" + pk_course_code + "', 'N/A', 0);";
 
           SQLiteDatabase db = this.getWritableDatabase();
           db.execSQL(stmt);
 
       }
+
+      public void setSemester(int semester, String pk_course_id)
+      {
+          String stmt = "UPDATE SCHEDULE SET i_semester = " + semester +
+                  " WHERE fk_course_id = '" + pk_course_id + "';";
+
+          SQLiteDatabase db = this.getWritableDatabase();
+          db.execSQL(stmt);
+
+      }
+
+      public void setSemesterChoice(int semester, String c_course_group)
+      {
+          String pk_course_id = "C|"+ c_course_group;
+          String stmt = "UPDATE SCHEDULE SET i_semester = " + semester +
+                  " WHERE pk_schedule in " +
+                  "(SELECT pk_schedule FROM SCHEDULE WHERE fk_course_id =  '" + pk_course_id + "' and i_semester is NULL LIMIT 1);";
+
+          SQLiteDatabase db = this.getWritableDatabase();
+          db.execSQL(stmt);
+
+      }
+
 	  public void addCourse(String major_id, String name, int credits, String semester, String group)
 	  {
 		  String stmt = "INSERT INTO COURSES " +
