@@ -182,7 +182,7 @@ public class Schedule {
 		while(!allTaken(classes)){
 			Class sem[] = getSemester(credits, currentSemester);	// finds next consecutive semester
 			currentSemester++;	// represents time semesters passing
-			currentSemester%=3;	// mods value to adjust to account for fall + spring (TODO: add summer)
+			currentSemester%=3;	// mods value to adjust to account for fall + spring + summer
 			schedule[semesterCounter] = sem;	// assigns semester to appropriate array location in matrix
 			semesterCounter++;	//increases schedule semester
 		}
@@ -239,15 +239,23 @@ public class Schedule {
 			Class[] temp = semester;		// adds class to semester array
 			semester = new Class[temp.length+1];
 			for(int i=0; i<temp.length; i++){	semester[i]=temp[i];	}
-			semester[temp.length] = next;	
-			
+			semester[temp.length] = next;
+
 			semesterCredits += next.getCred();	// increments credits
 		}
+        //Add update the taken flag in the array to mark the class as scheduled and update the
+        //semester in SCHEUDLE for the course
 		for(int i=0; i<semester.length; i++){
             if(semester[i].getCode().equals("C"))
+            {
+                database.setSemesterChoice(term, semester[i].getCourseGroup());
                 classes.get(getChoiceIndex(semester[i].getCourseGroup())).setTaken(true);
+            }
             else
-			    classes.get(getIndex(semester[i].getCode())).setTaken(true);	// sets class to taken
+            {
+                database.setSemester(term, semester[i].getCode());
+                classes.get(getIndex(semester[i].getCode())).setTaken(true);    // sets class to taken
+            }
 		}
 		
 		return semester;

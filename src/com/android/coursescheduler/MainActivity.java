@@ -171,7 +171,7 @@ import android.widget.TextView;
 		             buttonCounter++;							// incremenets button counter
 		             
 		             // adds the row to the table
-		             if(buttonCounter%2==0 && buttonCounter != 0){	table.addView(row, layoutParams);	} 
+		             if(buttonCounter%2==0 && buttonCounter != 0){	table.addView(row, layoutParams);	}
 		             
 		             //allows click-ability of dynamically creates buttons
 		             final int s=sem;
@@ -184,7 +184,7 @@ import android.widget.TextView;
 					});
 	    		}
 	    	}	// corrects UI if necessary
-	    	if(buttonCounter%2==1){	
+	    	if(buttonCounter%2==1){
 				courseButton = new Button(this);
 				courseButton.setVisibility(View.GONE);
 				row.addView(courseButton);
@@ -195,7 +195,7 @@ import android.widget.TextView;
 	    	table = new TableLayout(this);
 	    	table.setLayoutParams(new TableLayout.LayoutParams(10,2));
     	}	// corrects UI if necessary
-    	if(buttonCounter%2==1){	
+    	if(buttonCounter%2==1){
 			courseButton = new Button(this);
 			courseButton.setVisibility(View.GONE);
 			row.addView(courseButton);
