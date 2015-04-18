@@ -13,6 +13,7 @@ public class Class {
 	private int relevance;			// relevance integer (private?)
 	private String grade;			// user grade
     private String course_group;    // used to choose what electives are available
+    private int pk_schedule;
 	
 	Class(){	
 		//class constructor sets up a new blank class to be modified with functions
@@ -30,6 +31,7 @@ public class Class {
 		relevance = 0;
         course_group = "none";
         taken = 0;
+        pk_schedule = -1;
 	}
 	
 	Class(int num){
@@ -48,6 +50,7 @@ public class Class {
 		relevance = 0;
         course_group = "none";
         taken = 0;
+        pk_schedule = -1;
 	}
 	
 	static boolean checkNone(String s){
@@ -145,7 +148,9 @@ public class Class {
     void setPrereqs(String[] pre) { prereqs = pre;  }
     void setCoreqs(String[] coreq) { coreqs = coreq; }
     void setCourseGroup(String group) { course_group = group; }
+    void setPkSchedule(int p) { pk_schedule = p; }
 	int getCred(){	return credits;	}
+    int getPkSchedule() { return pk_schedule; }
 	String getCode(){	return courseCode;	}
 	String[] getPrereqs(){	return prereqs;	}
 	String[] getCoreqs(){ return coreqs;	}
@@ -160,5 +165,11 @@ public class Class {
     void setTaken(int t) { taken = t; }
 	String getName(){	return name;	}
 	int getRel(){	return relevance;	}
+
+
+    @Override
+    public String toString(){
+        return courseCode + " - " + name;
+    }
 
 }

@@ -231,12 +231,24 @@ public class Database extends SQLiteOpenHelper {
               pk_course_code = course.getCode() + "|" + course.getCourseGroup();
           }
 
+          String[] fk_course_id = {pk_course_code};
+
           String stmt = "INSERT INTO SCHEDULE " +
                   "(fk_course_id, c_grade, b_taken) VALUES " +
                   "('" + pk_course_code + "', 'N/A', 0);";
 
           SQLiteDatabase db = this.getWritableDatabase();
           db.execSQL(stmt);
+
+          Cursor cursor = db.rawQuery("SELECT MAX(pk_schedule) as pk_schedule from SCHEDULE where fk_course_id = ?;", fk_course_id);
+
+          if(cursor != null && cursor.getCount() > 0)
+          {
+              cursor.moveToFirst();
+              course.setPkSchedule(Integer.parseInt(cursor.getString(cursor.getColumnIndex("pk_schedule"))));
+
+              cursor.close();
+          }
 
       }
 
@@ -492,6 +504,56 @@ public class Database extends SQLiteOpenHelper {
           return courses;
       }
 
+      public ArrayList<Class> getCoursesByGroup(Class c)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          ArrayList<Class> courses = new ArrayList<Class>();
+          String semester = getScheduledSemester(c.getPkSchedule());
+          String[] arguments = {"%"+ String.valueOf(c.getCourseGroup()) + "%","%"+ semester + "%"};
+
+          Cursor cursor =  db.rawQuery( "SELECT * FROM COURSES WHERE c_course_group LIKE ? AND c_semester LIKE ?;", arguments );
+
+          if(cursor != null && cursor.getCount() > 0) {
+              cursor.moveToFirst();
+              for (int i = 0; i < cursor.getCount(); ++i) {
+                  Class course = new Class();
+                  course.setCode(cursor.getString(cursor.getColumnIndex("pk_course_id")));
+                  course.setCourseGroup(cursor.getString(cursor.getColumnIndex("c_course_group")));
+                  course.setSemester(cursor.getString(cursor.getColumnIndex("c_semester")));
+                  course.setCoreqs(getCoreqs(course.getCode()));
+                  course.setPrereqs(getPrereqs(course.getCode()));
+                  course.setCredits(Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_credits"))));
+                  course.setName(cursor.getString(cursor.getColumnIndex("c_course_name")));
+                  courses.add(course);
+
+                  cursor.moveToNext();
+              }
+          }
+          return courses;
+      }
+
+      public String getScheduledSemester(int schedule)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String[] pk_schedule = {String.valueOf(schedule)};
+
+          Cursor cursor = db.rawQuery("SELECT i_semester FROM SCHEDULE WHERE pk_schedule = ?;", pk_schedule);
+
+          if(cursor != null && cursor.getCount() > 0)
+          {
+              cursor.moveToFirst();
+              int semester = Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_semester")));
+
+              if(semester%3 == 0)
+                  return "fall";
+              else if(semester%3 == 1)
+                  return  "spring";
+              else
+                  return "summer";
+          }
+          else
+              return "failed";
+      }
       public int getCredits(String fk_course_id)
       {
           SQLiteDatabase db = this.getReadableDatabase();
@@ -552,6 +614,7 @@ public class Database extends SQLiteOpenHelper {
                   for(int j = 0; j < cursor.getCount(); j++)
                   {
                       Class course = new Class();
+                      course.setPkSchedule(Integer.parseInt(cursor.getString(cursor.getColumnIndex("pk_schedule"))));
                       course.setCode(cursor.getString(cursor.getColumnIndex("fk_course_id")));
                       course.setGrade(cursor.getString(cursor.getColumnIndex("c_grade")));
                       course.setTaken(Integer.parseInt(cursor.getString(cursor.getColumnIndex("b_taken"))));

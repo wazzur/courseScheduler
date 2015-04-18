@@ -2,6 +2,8 @@ package com.android.coursescheduler;
 
 // imported files
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -16,9 +18,11 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -198,7 +202,10 @@ import android.widget.TextView;
                         courseButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                classBtn(schedule[s][c]);
+                                if(!schedule[s][c].getCode().equals("C"))
+                                    classBtn(schedule[s][c]);
+                                else
+                                    choiceBtn(schedule[s][c]);
                             }
                         });
                     }
@@ -261,7 +268,72 @@ import android.widget.TextView;
 		AlertDialog ad = alert.create();
 		ad.show();
 	}
-    
+
+    void choiceBtn(final Class c){
+        //this function/method creates the functionality of clicking a class button
+
+        // initializes variable for our alert button.
+        LayoutInflater li = LayoutInflater.from(context);
+        View w = li.inflate(R.layout.window, null);	// popup window
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setView(w);
+        final TextView classInfo = (TextView) w.findViewById(R.id.info);
+        final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
+
+        // sets class info as popup window text
+        classInfo.setText(s.printClass(c));
+        // set dialog message
+        alert.setCancelable(false).setPositiveButton("Choose a Class",
+                new DialogInterface.OnClickListener() {
+                     public void onClick(DialogInterface dialog,int id)
+                     {
+                        listChoices(c);
+                    }
+                 })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        });
+
+        //creates and shows alert for user input
+        AlertDialog ad = alert.create();
+        ad.show();
+    }
+
+    void listChoices(Class c)
+    {
+        //this function/method creates the functionality of clicking a class button
+        ArrayAdapter<Class> adapter;
+        ArrayList<Class> classes = new ArrayList<Class>();
+        LayoutInflater li = LayoutInflater.from(context);
+        View w = li.inflate(R.layout.choose_class, null);	// popup window
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
+        alert.setView(w);
+        final ListView classList = (ListView) w.findViewById(R.id.chooseClassList);
+
+        classes = database.getCoursesByGroup(c);
+
+        adapter = new ArrayAdapter<Class>(this, R.layout.choose_class_row, classes);
+        classList.setAdapter(adapter);
+        // set dialog message
+        alert.setCancelable(false).setPositiveButton("Choose a Class",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // allows user to input a grade to be updated with positive button
+
+                    }
+                })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {dialog.cancel();}});
+
+        //creates and shows alert for user input
+        AlertDialog ad = alert.create();
+        ad.show();
+    }
+
     void addText(String txt){
     	// adds string variable text to UI layout.
     	TextView t = new TextView(this);
