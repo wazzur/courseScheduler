@@ -19,10 +19,10 @@ COP4531
 CDA3100
 PHY2048C
 PHY2049C
-C	AE,CS
-C	AE,CS
-C	PL
-C	Science
-C	FL1
-C	FL2
-C	FL3
+C AdvancedElective,ComputerScience
+C	AdvancedElective,ComputerScience
+C	ProgrammingLanguage
+C	ScienceElective
+C	ForeignLanguage1
+C	ForeignLanguage2
+C	ForeignLanguage3
