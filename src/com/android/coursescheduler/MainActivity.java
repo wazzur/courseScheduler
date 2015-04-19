@@ -2,8 +2,6 @@ package com.android.coursescheduler;
 
 // imported files
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -13,22 +11,29 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.text.Editable;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.InflateException;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
- public class MainActivity extends Activity {
+ public class MainActivity extends ActionBarActivity  implements NavigationDrawerFragment.NavigationDrawerCallbacks{
 
+     /*
 	Schedule s;	// user schedule variable
 	TextView gpaText;		
 	final Context context = this;
@@ -40,17 +45,106 @@ import android.widget.TextView;
 	GradientDrawable gDraw;
     Database database;
 	boolean clearSchedule;		// to check if schedule exists to remake.
-    boolean first_time_run;
-				
+    boolean first_time_run;*/
+
+     private NavigationDrawerFragment mNavigationDrawerFragment;
+     private mainFragment mainFrag;
+
+     private CharSequence mTitle;
+
+
+     @Override
+     public void onNavigationDrawerItemSelected(int position) {
+         // update the main content by replacing fragments
+
+         FragmentManager fragmentManager = getSupportFragmentManager();
+
+         if (position == 1)
+         {
+             fragmentManager.beginTransaction()
+                     .replace(R.id.container, mainFrag.newInstance(1))
+                     .commit();
+         }
+         else {
+             /*fragmentManager.beginTransaction()
+                     .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                     .commit();
+                     */
+             LayoutInflater li = LayoutInflater.from(this);
+             View w = li.inflate(R.layout.window, null);	// popup window
+             AlertDialog.Builder alert = new AlertDialog.Builder(this);
+             alert.setView(w);
+             final TextView classInfo = (TextView) w.findViewById(R.id.info);
+             final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
+
+             // sets class info as popup window text
+             //classInfo.setText(s.printClass(c));
+             // set dialog message
+             alert.setCancelable(false).setPositiveButton("Update GPA",
+                     new DialogInterface.OnClickListener() {
+                         public void onClick(DialogInterface dialog,int id)
+                         {
+                             // allows user to input a grade to be updated with positive button
+                             Editable inpt = userInput.getText();
+                             //c.setGrade(inpt.toString());
+                             //if(c.getGrade() != null){
+                               //  gpaText.setText("GPA: "+s.calcGPA());
+                             //}
+                         }
+                     })
+                     .setNegativeButton("Cancel",
+                             new DialogInterface.OnClickListener() {
+                                 public void onClick(DialogInterface dialog,int id) {dialog.cancel();}});
+
+             //creates and shows alert for user input
+             AlertDialog ad = alert.create();
+             ad.show();
+         }
+     }
+
+     public void onSectionAttached(int number) {
+         switch (number) {
+             case 1:
+                 //mTitle = getString(R.string.title_section1);
+                 mTitle = "Pocket Adviser";
+                 break;
+             case 2:
+                 mTitle = "test2";
+                 break;
+             case 3:
+                 mTitle = "test3";
+                 break;
+         }
+     }
+
+     public void restoreActionBar() {
+         ActionBar actionBar = getSupportActionBar();
+         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
+         actionBar.setDisplayShowTitleEnabled(true);
+         actionBar.setTitle(mTitle);
+     }
+
     protected void onCreate(Bundle savedInstanceState) {
 
         //Log.e("DEBUG", c.getString(c.getColumnIndex("pk_major")) + c.getString(c.getColumnIndex("c_major_name")));
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        initialize();    // initializes necessary variables
+        //initialize();
 
-        
+        mNavigationDrawerFragment = (NavigationDrawerFragment)
+                getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
+        mTitle = getTitle();
+
+        // Set up the drawer.
+        mNavigationDrawerFragment.setUp(
+                R.id.navigation_drawer,
+                (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        mainFrag = mainFrag.newInstance(1);
+            // initializes necessary variables
+
+        /*
         //credits button
         creditsButton.setOnClickListener(new View.OnClickListener() {
 			@SuppressLint("InflateParams") @Override
@@ -84,6 +178,8 @@ import android.widget.TextView;
 				
 			}
 		});
+
+
         
         //make schedule button
         makeSchedule.setOnClickListener(new View.OnClickListener() {
@@ -103,8 +199,11 @@ import android.widget.TextView;
 				clearSchedule = true;	// ensures schedule is cleared next time user clicks schedule
 			}
 		});
+
+        */
     }
 
+     /*
 	private void initialize() {
 		//initialize necessary variables
         database = new Database(this); //Initialize the database
@@ -128,7 +227,7 @@ import android.widget.TextView;
         layoutParams = new LinearLayout.LayoutParams(
 	            LinearLayout.LayoutParams.WRAP_CONTENT,
 	            LinearLayout.LayoutParams.WRAP_CONTENT);
-        layout = (LinearLayout) findViewById(R.id.LL);
+        layout = (LinearLayout) getParent().findViewById(R.id.LL);
         gpaText  = (TextView) findViewById(R.id.gpaView);
         creditsButton = (Button) findViewById(R.id.credBtn);
         gDraw = new GradientDrawable();
@@ -202,10 +301,7 @@ import android.widget.TextView;
                         courseButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if(!schedule[s][c].getCode().equals("C"))
-                                    classBtn(schedule[s][c]);
-                                else
-                                    choiceBtn(schedule[s][c]);
+                                classBtn(schedule[s][c]);
                             }
                         });
                     }
@@ -217,6 +313,8 @@ import android.widget.TextView;
                     table.addView(row, layoutParams);
                     buttonCounter++;
                 }
+                //tempLayout.addView(table);
+                //Log.e("test", String.valueOf(layoutParams) );
                 tempLayout.addView(table, layoutParams);
                 table = new TableLayout(this);
                 table.setLayoutParams(new TableLayout.LayoutParams(10, 2));
@@ -229,7 +327,9 @@ import android.widget.TextView;
 			table.addView(row, layoutParams);
 			tempLayout.addView(table, layoutParams);
 		}
-    	layout.addView(tempLayout, layoutParams);
+        layout.addView(tempLayout);
+        Log.e("test2", String.valueOf(layoutParams) );
+    	//layout.addView(tempLayout, layoutParams);
     	addText("Graduation!");	// prints graduation message
         clearSchedule = true;
     }
@@ -268,72 +368,7 @@ import android.widget.TextView;
 		AlertDialog ad = alert.create();
 		ad.show();
 	}
-
-    void choiceBtn(final Class c){
-        //this function/method creates the functionality of clicking a class button
-
-        // initializes variable for our alert button.
-        LayoutInflater li = LayoutInflater.from(context);
-        View w = li.inflate(R.layout.window, null);	// popup window
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setView(w);
-        final TextView classInfo = (TextView) w.findViewById(R.id.info);
-        final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
-
-        // sets class info as popup window text
-        classInfo.setText(s.printClass(c));
-        // set dialog message
-        alert.setCancelable(false).setPositiveButton("Choose a Class",
-                new DialogInterface.OnClickListener() {
-                     public void onClick(DialogInterface dialog,int id)
-                     {
-                        listChoices(c);
-                    }
-                 })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        });
-
-        //creates and shows alert for user input
-        AlertDialog ad = alert.create();
-        ad.show();
-    }
-
-    void listChoices(Class c)
-    {
-        //this function/method creates the functionality of clicking a class button
-        ArrayAdapter<Class> adapter;
-        ArrayList<Class> classes = new ArrayList<Class>();
-        LayoutInflater li = LayoutInflater.from(context);
-        View w = li.inflate(R.layout.choose_class, null);	// popup window
-        AlertDialog.Builder alert = new AlertDialog.Builder(context);
-        alert.setView(w);
-        final ListView classList = (ListView) w.findViewById(R.id.chooseClassList);
-
-        classes = database.getCoursesByGroup(c);
-
-        adapter = new ArrayAdapter<Class>(this, R.layout.choose_class_row, classes);
-        classList.setAdapter(adapter);
-        // set dialog message
-        alert.setCancelable(false).setPositiveButton("Choose a Class",
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // allows user to input a grade to be updated with positive button
-
-                    }
-                })
-                .setNegativeButton("Cancel",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,int id) {dialog.cancel();}});
-
-        //creates and shows alert for user input
-        AlertDialog ad = alert.create();
-        ad.show();
-    }
-
+    
     void addText(String txt){
     	// adds string variable text to UI layout.
     	TextView t = new TextView(this);
@@ -357,4 +392,402 @@ import android.widget.TextView;
 		tempLayout.addView(t, layoutParams);
 		semester++;
     }
+
+     */
+
+     public static class mainFragment extends Fragment {
+         /**
+          * The fragment argument representing the section number for this
+          * fragment.
+          */
+
+         Schedule s;	// user schedule variable
+         TextView gpaText;
+         //final Context context = this;
+         int credits, semester;
+         Class nextSemester[];	// next semester of classes
+         LinearLayout tempLayout, layout;	// these variables are our layouts
+         LinearLayout.LayoutParams layoutParams;
+         Button creditsButton, courseButton, makeSchedule;	// credits button, general class button, and make schedule buttons
+         GradientDrawable gDraw;
+         Database database;
+         boolean clearSchedule;		// to check if schedule exists to remake.
+         boolean first_time_run;
+
+
+         private static final String ARG_SECTION_NUMBER = "section_number";
+
+
+         private static View rootView;
+         /**
+          * Returns a new instance of this fragment for the given section
+          * number.
+          */
+         public static mainFragment newInstance(int sectionNumber) {
+             mainFragment fragment = new mainFragment();
+             Bundle args = new Bundle();
+             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+             fragment.setArguments(args);
+             return fragment;
+         }
+
+         public mainFragment() {
+         }
+
+         @Override
+         public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                  Bundle savedInstanceState) {
+
+
+
+
+             //View rootView = inflater.inflate(R.layout.activity_main, container, false);
+
+             if (rootView != null) {
+                 ViewGroup parent = (ViewGroup) rootView.getParent();
+                 if (parent != null)
+                     parent.removeView(rootView);
+             }
+             try {
+                 rootView = inflater.inflate(R.layout.fragment_main, container, false);
+             } catch (InflateException e) {
+             }
+
+             initialize();
+
+             //credits button
+             creditsButton.setOnClickListener(new View.OnClickListener() {
+                 @SuppressLint("InflateParams") @Override
+                 public void onClick(View v) {
+                     // sets up popup variables
+                     LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+                     View promptsView = layoutInflater.inflate(R.layout.prompts, null);
+                     AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                     alert.setView(promptsView);
+                     final EditText userInput;
+                     userInput=(EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+
+                     // set dialog message values for our alert message
+                     alert.setCancelable(false).setPositiveButton("OK",	// ok creates an onclick
+                             new DialogInterface.OnClickListener() {		// listener to refresh values
+                                 public void onClick(DialogInterface dialog,int id)
+                                 {		// reads user input into credits variable and refreshes UI
+                                     // TODO: error checking.
+                                     Editable inpt = userInput.getText();
+                                     credits = Integer.parseInt(inpt.toString());
+                                     creditsButton.setText("MinCredits: " + credits);
+                                 }
+                             })
+                             .setNegativeButton("Cancel",
+                                     new DialogInterface.OnClickListener() {
+                                         public void onClick(DialogInterface dialog,int id) {dialog.cancel();}});
+
+                     // creates the alert message
+                     AlertDialog ad = alert.create();
+                     ad.show();	// shows alert message to screen
+
+                 }
+             });
+
+
+
+             //make schedule button
+             makeSchedule.setOnClickListener(new View.OnClickListener() {
+                 @Override
+                 public void onClick(View v) {
+                     // checks if shedule exists and needs to be removed
+                     if(clearSchedule){
+                         layout.removeView(tempLayout);
+                         s.reset();
+                         database.clearSchedule();
+                     }
+                     // makes schedule based on credits variable
+                     if(!first_time_run) {
+                         Log.e("first_time_run", String.valueOf(first_time_run));
+                         s = new Schedule("Computer Science", database);
+                         makeButtons(s.makeSchedule(credits));
+                     }
+                     else
+                     {
+                         s = new Schedule(database);
+                         makeButtons(s.getSchedule());
+                     }
+
+                     clearSchedule = true;	// ensures schedule is cleared next time user clicks schedule
+                 }
+             });
+
+             return rootView;
+         }
+
+
+         private void initialize() {
+             //initialize necessary variables
+             database = new Database(getActivity()); //Initialize the database
+             if(database.isInitialized())
+                 first_time_run = false;
+             else
+                 first_time_run = true;
+             //database.clearTables();
+             Log.e("DEBUG", "Init DB");
+             try {
+                 if (first_time_run)
+                     database.readData(getActivity());
+             }
+             catch (IOException e)
+             {
+                 Log.e("IOException", e.toString());
+
+             }
+
+
+             layoutParams = new LinearLayout.LayoutParams(
+                     LinearLayout.LayoutParams.WRAP_CONTENT,
+                     LinearLayout.LayoutParams.WRAP_CONTENT);
+             layout = (LinearLayout) rootView.findViewById(R.id.LL);
+             gpaText  = (TextView) rootView.findViewById(R.id.gpaView);
+             creditsButton = (Button) rootView.findViewById(R.id.credBtn);
+             makeSchedule = (Button) rootView.findViewById(R.id.makeSchedule);
+             gDraw = new GradientDrawable();
+             gDraw.setShape(GradientDrawable.RECTANGLE);
+             gDraw.setStroke(5, Color.parseColor("#540115"));
+             gDraw.setColor(Color.parseColor("#CDC092"));
+             clearSchedule = false;	// nothing to clear first time making schedule.
+             credits = 12;	// standard schedule floor
+             String contents ="";   	// empty file contents
+
+             if(first_time_run) {
+                 s = new Schedule("Computer Science", database);
+             }
+             else
+             {
+                 s = new Schedule(database);
+                 makeButtons(s.getSchedule());
+             }
+
+
+         }
+
+         void makeButtons(final Class[][] schedule){
+             // this function/method creates the buttons for each class in our schedule
+             Log.e("make buttons start", "-");
+             //initializes variables
+             semester = 0;
+             layoutParams.setMargins(20, 20, 20, 20);
+             tempLayout = new LinearLayout(getActivity());		// L = layout
+             tempLayout.setOrientation(LinearLayout.VERTICAL);
+             TableLayout table = new TableLayout(getActivity());	// table of buttons
+             table.setLayoutParams(new TableLayout.LayoutParams(10,3));	// 2 per row
+             TableRow row = null;		// maximum of 10 rows (should be excessive)
+             int buttonCounter = 0;
+
+             // iterates through the schedule to print the buttons to layout
+             // exit if schedule nulls for any reason, this should never happen
+             for(int sem=0; sem<schedule.length; sem++) {
+                 //if(schedule[sem] == null){	break;	}
+                 semBreak();                                // creates a visual break between semesters
+                 if(schedule[sem] != null)
+                 {
+                     Log.e("make buttons", "not null");
+                     for (int course = 0; course < schedule[sem].length; course++) {    // iterates through each semester and prints
+                         Log.e("mak buttons iterate", String.valueOf(course));
+                         if (buttonCounter % 2 == 0) {    // corrects UI alignment if button ended in an odd number
+                             row = new TableRow(getActivity());
+                             row.setPadding(5, 5, 5, 5);
+                             //row.setDividerDrawable(getWallpaper());
+                         }
+                         if (schedule[sem][course] != null) {                // verifies class existance
+                             courseButton = new Button(getActivity());                // creates new button
+
+                             if(schedule[sem][course].getCode().equals("C"))
+                                 courseButton.setText(schedule[sem][course].getCourseGroup());
+                             else
+                                 courseButton.setText(schedule[sem][course].getCode());        // sets button name to class code
+
+                             courseButton.setId(course);                        // sets button reference id
+                             courseButton.setGravity(Gravity.CENTER);        // centralizes button gravity
+                             courseButton.setBackground(gDraw);                // sets background
+                             row.addView(courseButton, 185, 115);            // adds button to our table row
+                             buttonCounter++;                            // incremenets button counter
+
+                             // adds the row to the table
+                             if (buttonCounter % 2 == 0 && buttonCounter != 0) {
+                                 table.addView(row, layoutParams);
+                             }
+
+                             //allows click-ability of dynamically creates buttons
+                             final int s = sem;
+                             final int c = course;
+                             courseButton.setOnClickListener(new View.OnClickListener() {
+                                 @Override
+                                 public void onClick(View v) {
+                                     classBtn(schedule[s][c]);
+                                 }
+                             });
+                         }
+                     }    // corrects UI if necessary
+                     if (buttonCounter % 2 == 1) {
+                         courseButton = new Button(getActivity());
+                         courseButton.setVisibility(View.GONE);
+                         row.addView(courseButton);
+                         table.addView(row, layoutParams);
+                         buttonCounter++;
+                     }
+                     //tempLayout.addView(table);
+                     //Log.e("test", String.valueOf(layoutParams) );
+                     tempLayout.addView(table, layoutParams);
+                     table = new TableLayout(getActivity());
+                     table.setLayoutParams(new TableLayout.LayoutParams(10, 3));
+                 }
+                 else {
+                     Log.e("make buttons", "IS NULL");
+                 }
+             }	// corrects UI if necessary
+
+             Log.e("make buttons length", String.valueOf(schedule.length));
+             if(buttonCounter%2==1){
+                 courseButton = new Button(getActivity());
+                 courseButton.setVisibility(View.GONE);
+                 row.addView(courseButton);
+                 table.addView(row, layoutParams);
+                 tempLayout.addView(table, layoutParams);
+             }
+             //layout.addView(tempLayout);
+             //Log.e("test2", String.valueOf(layoutParams) );
+             layout.addView(tempLayout, layoutParams);
+             addText("Graduation!");	// prints graduation message
+             clearSchedule = true;
+         }
+
+         void classBtn(final Class c){
+             //this function/method creates the functionality of clicking a class button
+
+             // initializes variable for our alert button.
+             LayoutInflater li = LayoutInflater.from(getActivity());
+             View w = li.inflate(R.layout.window, null);	// popup window
+             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+             alert.setView(w);
+             final TextView classInfo = (TextView) w.findViewById(R.id.info);
+             final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
+
+             // sets class info as popup window text
+             classInfo.setText(s.printClass(c));
+             // set dialog message
+             alert.setCancelable(false).setPositiveButton("Update GPA",
+                     new DialogInterface.OnClickListener() {
+                         public void onClick(DialogInterface dialog,int id)
+                         {
+                             // allows user to input a grade to be updated with positive button
+                             Editable inpt = userInput.getText();
+                             c.setGrade(inpt.toString());
+                             if(c.getGrade() != null){
+                                 gpaText.setText("GPA: "+s.calcGPA());
+                             }
+                         }
+                     })
+                     .setNegativeButton("Cancel",
+                             new DialogInterface.OnClickListener() {
+                                 public void onClick(DialogInterface dialog,int id) {dialog.cancel();}});
+
+             //creates and shows alert for user input
+             AlertDialog ad = alert.create();
+             ad.show();
+         }
+
+         void addText(String txt){
+             // adds string variable text to UI layout.
+             TextView t = new TextView(getActivity());
+             t.setGravity(Gravity.CENTER);
+             t.setTextColor(Color.parseColor("#CDC092"));
+             t.setText(txt);
+             tempLayout.addView(t, layoutParams);
+         }
+
+         void semBreak(){
+             String txt;
+             int c = (1+(semester/3));
+             if(semester%3==0){	txt = "Fall Semester " + c;
+             }else if(semester%3==1){	txt = "Spring Semester "  + c;	}
+             else { txt = "Summer Semester "+c; }
+             TextView t = new TextView(getActivity());
+             t.setPadding(75, 0, 0, 0);
+             t.setGravity(Gravity.CENTER);
+             t.setTextColor(Color.parseColor("#CDC092"));
+             t.setText(txt);
+             tempLayout.addView(t, layoutParams);
+             semester++;
+         }
+
+         @Override
+         public void onAttach(Activity activity) {
+             super.onAttach(activity);
+             ((MainActivity) activity).onSectionAttached(
+                     getArguments().getInt(ARG_SECTION_NUMBER));
+         }
+     }
+
+     public static class PlaceholderFragment extends Fragment {
+         /**
+          * The fragment argument representing the section number for this
+          * fragment.
+          */
+         private static final String ARG_SECTION_NUMBER = "section_number";
+
+
+         private static View rootView;
+         /**
+          * Returns a new instance of this fragment for the given section
+          * number.
+          */
+         public static PlaceholderFragment newInstance(int sectionNumber) {
+             PlaceholderFragment fragment = new PlaceholderFragment();
+             Bundle args = new Bundle();
+             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+             fragment.setArguments(args);
+             return fragment;
+         }
+
+         public PlaceholderFragment() {
+         }
+
+         @Override
+         public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                  Bundle savedInstanceState) {
+
+
+             //View rootView = inflater.inflate(R.layout.activity_main, container, false);
+
+             if (rootView != null) {
+                 ViewGroup parent = (ViewGroup) rootView.getParent();
+                 if (parent != null)
+                     parent.removeView(rootView);
+             }
+             try {
+                 rootView = inflater.inflate(R.layout.fragment_main, container, false);
+             } catch (InflateException e) {
+             }
+
+             return rootView;
+         }
+
+         @Override
+         public void onAttach(Activity activity) {
+             super.onAttach(activity);
+             ((MainActivity) activity).onSectionAttached(
+                     getArguments().getInt(ARG_SECTION_NUMBER));
+         }
+     }
+
+     @Override
+     public boolean onCreateOptionsMenu(Menu menu) {
+         if (!mNavigationDrawerFragment.isDrawerOpen()) {
+             // Only show items in the action bar relevant to this screen
+             // if the drawer is not showing. Otherwise, let the drawer
+             // decide what to show in the action bar.
+             getMenuInflater().inflate(R.menu.main, menu);
+             restoreActionBar();
+             return true;
+         }
+         return super.onCreateOptionsMenu(menu);
+     }
 }
