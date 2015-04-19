@@ -10,5 +10,10 @@
 	<string name="gradePrompt">Input Grade: </string>
 	<string name="info">Class Info</string>
 	<string name="hint">Letter grade</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_example">Example Action</string>
 	
 </resources>
