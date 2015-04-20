@@ -2,9 +2,9 @@ MAC1105
 MAC1140
 ENC1101
 ENC1102
-C	HIS
-C	SOC
-C	LIT
-C	HUM
-C	SOC,HUM,HIS
-C	SOC,HUM,HIS
+C	History
+C	SocialStudies
+C	Literacy
+C	Humanities
+C	SocialStudies,Humanities,History
+C	SocialStudies,Humanities,History
