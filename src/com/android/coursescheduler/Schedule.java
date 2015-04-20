@@ -172,6 +172,10 @@ public class Schedule {
 		// finds total grade point - then divides by total credits to find GPA
 		int credits = 0;
 		double gpa=0;
+
+        if(classes.size() < 1)
+            classes = database.getScheduledClasses();
+
 		//loops through each class
 		for(int i=0; i<classes.size(); i++){
 			Class c = classes.get(i);
@@ -316,6 +320,9 @@ public class Schedule {
                 break;
             }
         }
+
+        if(classes.size() > 0)
+            classes.get(getIndex(course.getCode())).setTaken(b_taken);
     }
 
     Class nextClass(Class[] semester, int semstr, int semester_count){

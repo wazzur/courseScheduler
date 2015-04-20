@@ -654,6 +654,32 @@ public class Database extends SQLiteOpenHelper {
           return cursor.getString(cursor.getColumnIndex("c_semester"));
       }
 
+      public ArrayList<Class> getScheduledClasses()
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          Cursor cursor = db.rawQuery("SELECT * FROM SCHEDULE", null);
+          ArrayList<Class> courses = new ArrayList<Class>();
+
+          if(cursor != null && cursor.getCount() > 0)
+          {
+              cursor.moveToFirst();
+              for(int j = 0; j < cursor.getCount(); j++)
+              {
+                  Class course = new Class();
+                  course.setPkSchedule(Integer.parseInt(cursor.getString(cursor.getColumnIndex("pk_schedule"))));
+                  course.setCode(cursor.getString(cursor.getColumnIndex("fk_course_id")));
+                  course.setGrade(cursor.getString(cursor.getColumnIndex("c_grade")));
+                  course.setTaken(Integer.parseInt(cursor.getString(cursor.getColumnIndex("b_taken"))));
+                  populateCourseInfo(course);
+                  courses.add(course);
+                  cursor.moveToNext();
+                  Log.e("DEBUG", course.getCode());
+              }
+          }
+
+          return courses;
+      }
+
       public Class[][] getFullSchedule(int total_semesters)
       {
           SQLiteDatabase db = this.getReadableDatabase();
@@ -667,8 +693,6 @@ public class Database extends SQLiteOpenHelper {
 
               if(cursor != null && cursor.getCount() > 0)
               {
-
-
                   cursor.moveToFirst();
                   semester = new Class[cursor.getCount()];
 

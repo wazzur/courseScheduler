@@ -559,6 +559,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             {
                 s = new Schedule(database);
                 makeButtons(s.getSchedule());
+                gpaText.setText("GPA: "+s.calcGPA());
             }
 
 
