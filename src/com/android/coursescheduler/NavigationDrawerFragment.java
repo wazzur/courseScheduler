@@ -103,7 +103,7 @@ public class NavigationDrawerFragment extends Fragment {
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
                 new String[]{
-                        "test1",
+                        "Choose Major",
                         "test drawer 2",
 
                 }));
