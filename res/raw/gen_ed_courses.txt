@@ -3,8 +3,8 @@ MAC1140
 ENC1101
 ENC1102
 C	History
-C	SocialStudies
+C	SocialScience
 C	Literacy
 C	Humanities
-C	SocialStudies,Humanities,History
-C	SocialStudies,Humanities,History
+C	SocialScience,Humanities,History
+C	SocialScience,Humanities,History

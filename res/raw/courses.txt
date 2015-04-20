@@ -21,8 +21,8 @@ COP4531	3	Analysis of Data Structures & Algorithms	fall/spring	COP4530,MAD3105	S
 CDA3100	3	Computer Organization I	fall	none	COP3330,MAD2104	none
 PHY2048C	5	Physics I	fall	none	MAC2311	none
 PHY2049C	5	Physics II	spring	PHY2048	none	none
-BSC1005	3	General Biology	fall/spring/summer	none	none	Science
-PSY2012	3	General Psychology	fall/spring/summer	none	none	none
+BSC1005	3	General Biology	fall/spring/summer	none	none	ScienceElective
+PSY2012	3	General Psychology	fall/spring/summer	none	none	SocialScience
 STA2122	3	Statistics	fall/summer/spring	MAC1105	none	none
 SPN1120	4	Spanish I	fall/spring/summer	none	none	ForeignLanguage1
 SPN1121	4	Spanish II	fall/spring/summer	SPN1120	none	ForeignLanguage2
@@ -42,13 +42,13 @@ PSB4461	3	Hormones and Behavior	fall/spring	PSY2012,PSB2000 	none	NeuroScience
 EXP3203c	4	Animal Sensory Processes	fall/spring	PSY3213c	none	NeuroScience
 PSB3004c	4	Physiological Psychology	fall/spring	PSY3213c	none	NeuroScience,Lecture&LabCombo
 EXP3202c	4	Sensation and Perception	fall/spring	PSY3213c	none	NeuroScience,Lecture&LabCombo
-SOP3004	3	Social Psychology	fall/spring/summer	none	none	Social,Cognitive,Development
-EXP2020	3	Mind and Cognition	fall/spring/summer	none	none	Social,Cognitive,Development
-EXP4640	3	Psychology of Language	spring	PSY2012	none	Social,Cognitive,Development
-EXP4404	3	Human Memory and Learning	fall	PSY2012	none	Social,Cognitive,Development
-EXP3604c	4	Cognitive Psychology		fall/spring/summer PSY3213c	none	Social,Cognitive,Development,Lecture&LabCombo
-DEP3103	3	Child Psychology	fall/spring/summer	PSY2012	none	Social,Cognitive,Development
-DEP4404	3	Adult Psychology	fall/spring/summer	PSY2012	none	Social,Cognitive,Development
+SOP3004	3	Social Psychology	fall/spring/summer	none	none	SocialScience,Cognitive,Development
+EXP2020	3	Mind and Cognition	fall/spring/summer	none	none	SocialScience,Cognitive,Development
+EXP4640	3	Psychology of Language	spring	PSY2012	none	SocialScience,Cognitive,Development
+EXP4404	3	Human Memory and Learning	fall	PSY2012	none	SocialScience,Cognitive,Development
+EXP3604c	4	Cognitive Psychology		fall/spring/summer PSY3213c	none	SocialScience,Cognitive,Development,Lecture&LabCombo
+DEP3103	3	Child Psychology	fall/spring/summer	PSY2012	none	SocialScience,Cognitive,Development
+DEP4404	3	Adult Psychology	fall/spring/summer	PSY2012	none	SocialScience,Cognitive,Development
 EXP3422c	4	Conditioning and Learning	fall/spring/summer	PSY3213c	none	Lecture&LabCombo
 CHM1045	3	General ChemistryI	fall/spring	none	none	Science
 COP3252	3	Java Programming	fall/spring	COP3330	none	ProgrammingLanguage
@@ -57,4 +57,29 @@ COP4613	3	RealTime Systems	fall/spring	COP4530	none	AdvancedElective,ComputerSci
 COP4380	3	Reactive System Programming	fall/spring	COP4530	COP4610	AdvancedElective,ComputerScience
 SPA2020	3	Effective Oral Communication	fall/spring/summer	none	none	OralCompetency
 ENC1101	3	Freshman Composition and Rhetoric	fall/spring/summer	none	none	none
-ENC1102	3	Freshman Writing, Reading, and Research	fall/spring/summer	ENC1101	none	none	
+ENC1102	3	Freshman Writing, Reading, and Research	fall/spring/summer	ENC1101	none	none
+WOH1023	3	The Modern World to 1815	fall/spring/summer	none	none	History
+WOH1030	3	The Modern World Since 1815	fall/spring	none	none	History
+AMH2010	3	A History of the United States	fall/spring	none	none	History
+AMH2020	3	A History of the United States	fall/spring/summer	none	none	History
+AMH2096	3	Black Women in America	fall/spring	none	none	History
+AMH2097	3	Nationality, Race, and Ethnicity in the United States	fall/spring/summer	none	none	History
+AMH2583	3	History of the Seminoles and Southeastern Tribes	fall/spring	none	none	History
+HIS3464	3	History of Science	fall/spring/summer	none	none	History
+HIS2050	3	The Historians Craft	fall/spring	none	none	History
+EUH2000	3	Ancient and Medival Civilizations	fall/spring/summer	none	none	History
+REL2121	3	Religion in the United States	fall/spring/summer	none	none	History
+AFA3101	3	Theory and Dynamics of Racism and Oppression	fall/spring	none	none	SocialScience
+CCJ2020	3	Introduction to Criminal Justice	fall/spring/summer	none	none	SocialScience
+CCJ3011	3	Criminology	fall/spring/summer	none	none	SocialScience
+ECO2000	3	Intro to Economics	fall/spring/summer	none	none	SocialScience
+ECO2013	3	Principles of Macroeconomics	fall/spring/summer	none	none	SocialScience
+ECO2023	3	Principles of Microeconomics	fall/spring/summer	none	none	SocialScience
+GEA1000	3	World Geography	fall/spring/summer	none	none	SocialScience
+PUP3002	3	Introduction to Public Policy	fall/spring/summer	none	none	SocialScience
+GEO1330	3	Environmental Science	fall/spring/summer	none	none	SocialScience
+GEO1400	3	Human Geography	fall/spring/summer	none	none	SocialScience
+SYG1000	3	Introductory Sociology	fall/spring/summer	none	none	SocialScience
+SYG2010	3	Social Problems	fall/spring/summer	none	none	SocialScience
+SYO3100	3	Family Problems and Social Change	fall/spring/summer	none	none	SocialScience
+SYO3200	3	Sociology of Religion	fall/spring	none	none	SocialScience	
