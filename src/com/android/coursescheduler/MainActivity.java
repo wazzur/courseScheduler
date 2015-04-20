@@ -2,14 +2,11 @@ package com.android.coursescheduler;
 
 // imported files
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
@@ -30,9 +27,11 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -80,7 +79,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setView(w);
             final TextView classInfo = (TextView) w.findViewById(R.id.info);
-            final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
+            //final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
 
             // sets class info as popup window text
             //classInfo.setText(s.printClass(c));
@@ -90,7 +89,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                         public void onClick(DialogInterface dialog,int id)
                         {
                             // allows user to input a grade to be updated with positive button
-                            Editable inpt = userInput.getText();
+                            //Editable inpt = userInput.getText();
                             //c.setGrade(inpt.toString());
                             //if(c.getGrade() != null){
                             //  gpaText.setText("GPA: "+s.calcGPA());
@@ -668,26 +667,32 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setView(w);
             final TextView classInfo = (TextView) w.findViewById(R.id.info);
-            final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
+            final Switch course_complete = (Switch) w.findViewById(R.id.completeSwitch);
+
+            //final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
+
+            if(c.isTaken() == 0)
+                course_complete.setChecked(false);
+            else
+                course_complete.setChecked(true);
 
             // sets class info as popup window text
             classInfo.setText(s.printClass(c));
             // set dialog message
-            alert.setCancelable(false).setPositiveButton("Update GPA",
+            alert.setCancelable(false).setPositiveButton("Update Course",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,int id)
                         {
                             // allows user to input a grade to be updated with positive button
-                            Editable inpt = userInput.getText();
-                            c.setGrade(inpt.toString());
-                            if(c.getGrade() != null){
-                                gpaText.setText("GPA: "+s.calcGPA());
-                            }
+                            updateCourse(c, course_complete.isChecked());
                         }
                     })
                     .setNegativeButton("Cancel",
                             new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {dialog.cancel();}});
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
 
             //creates and shows alert for user input
             AlertDialog ad = alert.create();
@@ -703,7 +708,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
             alert.setView(w);
             final TextView classInfo = (TextView) w.findViewById(R.id.info);
-            final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
+            //final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
 
             // sets class info as popup window text
             classInfo.setText(s.printClass(c));
@@ -776,6 +781,57 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
 
             ad.show();
         }
+
+        void updateCourse(final Class c, final boolean taken)
+        {
+            pk_schedule = c.getPkSchedule();
+
+            if(taken) {
+                //this function/method creates the functionality of clicking a class button
+                final ArrayAdapter<Class> adapter;
+                ArrayList<Class> classes = new ArrayList<Class>();
+                LayoutInflater li = LayoutInflater.from(getActivity());
+                View w = li.inflate(R.layout.update_course, null);    // popup window
+                AlertDialog.Builder alert = new AlertDialog.Builder(getActivity());
+                alert.setView(w);
+                final EditText letter_grade = (EditText) w.findViewById(R.id.letterGrade);
+
+                // set dialog message
+                alert.setCancelable(false).setPositiveButton("Update",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                // allows user to input a grade to be updated with positive button
+                                Editable input = letter_grade.getText();
+                                c.setGrade(input.toString());
+                                s.updateTakenStatus(c, taken);
+                                if(c.getGrade() != null){
+                                      gpaText.setText("GPA: "+s.calcGPA());
+                                    }
+                                makeButtons(s.getSchedule());
+                            }
+                        })
+                        .setNegativeButton("Cancel",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+
+                //creates and shows alert for user input
+                final AlertDialog ad = alert.create();
+                ad.show();
+            }
+            else
+            {
+                c.setGrade("N/A");
+                s.updateTakenStatus(c, taken);
+                if(c.getGrade() != null){
+                      gpaText.setText("GPA: "+s.calcGPA());
+                    }
+                makeButtons(s.getSchedule());
+            }
+        }
+
         void addText(String txt){
             // adds string variable text to UI layout.
             TextView t = new TextView(getActivity());

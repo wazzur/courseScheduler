@@ -99,10 +99,6 @@ public class Schedule {
 	boolean verify(Class c, Class[] semester, int semstr, int semester_count){
 		// verifies choose-ability of a class. verifies class is not in current semester,
 		// or is already taken, or has untaken requisites, and finally ensures correct semester.
-		if(c.getCourseGroup().contains("Foreign"))
-        {
-            String test = "Test";
-        }
 		if(c == null){	return false;	}
 		if(c.isScheduled()||contains(semester, c)){	return false;	}
 		boolean soFar = false;
@@ -179,7 +175,7 @@ public class Schedule {
 		//loops through each class
 		for(int i=0; i<classes.size(); i++){
 			Class c = classes.get(i);
-			if(c.getGrade() != null){	// verifies class has a grade/has been taken
+			if(!c.getGrade().equals("N/A")){	// verifies class has a grade/has been taken
 				credits += c.getCred();
 				if(c.getGrade().toUpperCase().contains("A")){
 					gpa += 4*c.getCred();
@@ -298,6 +294,28 @@ public class Schedule {
                 database.setSemester(semester_counter, course.getCode());
                 classes.get(getIndex(course.getCode())).setScheduled(true);    // sets class to taken
             }
+    }
+
+    public void updateTakenStatus(Class course, boolean taken)
+    {
+        int b_taken = 0;
+
+        if(taken)
+            b_taken = 1;
+
+        database.setTakenAndGrade(course, b_taken);
+
+        int semester = database.getSemesterNumber(course.getPkSchedule());
+
+        for(int i = 0; i < schedule[semester].length; i++)
+        {
+            if(schedule[semester][i].getPkSchedule() == course.getPkSchedule())
+            {
+                course.setTaken(b_taken);
+                schedule[semester][i] = course;
+                break;
+            }
+        }
     }
 
     Class nextClass(Class[] semester, int semstr, int semester_count){
@@ -515,4 +533,6 @@ public class Schedule {
             }
         }
     }
+
+
 }

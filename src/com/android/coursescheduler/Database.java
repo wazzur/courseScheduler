@@ -821,4 +821,13 @@ public class Database extends SQLiteOpenHelper {
               return false;
       }
 
+      public void setTakenAndGrade(Class course, int b_taken)
+      {
+          SQLiteDatabase db = this.getWritableDatabase();
+          String stmt = "UPDATE SCHEDULE SET b_taken = " + String.valueOf(b_taken) + ", " +
+                  "c_grade = '" + course.getGrade() + "' WHERE pk_schedule = " + String.valueOf(course.getPkSchedule());
+
+          db.execSQL(stmt);
+      }
+
 	} 
