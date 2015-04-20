@@ -19,7 +19,7 @@ COP4531
 CDA3100
 PHY2048C
 PHY2049C
-C AdvancedElective,ComputerScience
+C	AdvancedElective,ComputerScience
 C	AdvancedElective,ComputerScience
 C	ProgrammingLanguage
 C	ScienceElective
