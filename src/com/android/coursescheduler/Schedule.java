@@ -96,10 +96,13 @@ public class Schedule {
 		}
 	}
 	
-	boolean verify(Class c, Class[] semester, int semstr){
+	boolean verify(Class c, Class[] semester, int semstr, int semester_count){
 		// verifies choose-ability of a class. verifies class is not in current semester,
 		// or is already taken, or has untaken requisites, and finally ensures correct semester.
-		
+		if(c.getCourseGroup().contains("Foreign"))
+        {
+            String test = "Test";
+        }
 		if(c == null){	return false;	}
 		if(c.isScheduled()||contains(semester, c)){	return false;	}
 		boolean soFar = false;
@@ -134,6 +137,15 @@ public class Schedule {
             return false;
         else
             soFar = true;
+
+        //Check to see if the choices are able to be scheduled in the current semester
+        if(c.getCode().equals("C") && database.existCoursesForGroup(c.getCourseGroup())){
+            ArrayList<Class> possibleClasses = database.getCoursesByGroup(c, semstr, semester_count);
+            if(possibleClasses.size() > 0)
+                soFar = true;
+            else
+                soFar = false;
+        }
 
 		//if(c.getSemester(semstr) || c.getSemester(2)){		// summer not included currently
 			return soFar;
@@ -249,7 +261,7 @@ public class Schedule {
 		// decides and returns an array of classes determining the next semester
 		if(allTaken(classes)){	return null;	}
 		Class semester[] = new Class[1];	// creates a growing array
-		Class next = nextClass(semester, term);	// finds first element
+		Class next = nextClass(semester, term, semester_counter);	// finds first element
 		if(next == null){	return null;	}		// ensures first element was found
 		semester[0] = next;			// sets first element
 		int semesterCredits = next.getCred();			// sets current credits for semester
@@ -257,7 +269,7 @@ public class Schedule {
 
 		// loops while credits do not exceed credits per semester and all classes are not taken
 		while(semesterCredits < credits && !allTaken(classes)){
-			next = nextClass(semester, term);		// finds next class
+			next = nextClass(semester, term, semester_counter);		// finds next class
 			if(next == null){break;}	// breaks if no class was found
 			Class[] temp = semester;		// adds class to semester array
 			semester = new Class[temp.length+1];
@@ -288,12 +300,12 @@ public class Schedule {
             }
     }
 
-    Class nextClass(Class[] semester, int semstr){
+    Class nextClass(Class[] semester, int semstr, int semester_count){
 		// returns the next class in a sorted classes array 
 		// after verifying semester + co-existance
 		Class result = null;
 		for(int i= 0; i < classes.size(); i++){
-			if(verify(classes.get(i), semester, semstr)){
+			if(verify(classes.get(i), semester, semstr, semester_count)){
 				return classes.get(i);
 			}
 		}		

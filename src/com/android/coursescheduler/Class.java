@@ -139,6 +139,17 @@ public class Class {
 		semester[1] = spring;
 		semester[2] = summer;
 	}
+
+    String getSemesterString(int i)
+    {
+        if(i == 0)
+            return "fall";
+        else if(i == 1)
+            return "spring";
+        else
+            return "summer";
+    }
+
 	boolean[] getSemester(){	return semester;	}
 	boolean getSemester(int i){	return semester[i];	}
 	void setGrade(String g){	grade = g;	}

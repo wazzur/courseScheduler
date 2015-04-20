@@ -538,8 +538,39 @@ public class Database extends SQLiteOpenHelper {
 
                   if(checkScheduleEligibility(course, semester_num))
                     courses.add(course);
-                  else
+
                     cursor.moveToNext();
+              }
+          }
+          return courses;
+      }
+
+      public ArrayList<Class> getCoursesByGroup(Class c, int semstr, int semester_count)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          ArrayList<Class> courses = new ArrayList<Class>();
+          String semester = c.getSemesterString(semstr%3);
+
+          String[] arguments = {"%"+ String.valueOf(c.getCourseGroup()) + "%","%"+ semester + "%"};
+
+          Cursor cursor =  db.rawQuery( "SELECT * FROM COURSES WHERE c_course_group LIKE ? AND c_semester LIKE ?;", arguments );
+
+          if(cursor != null && cursor.getCount() > 0) {
+              cursor.moveToFirst();
+              for (int i = 0; i < cursor.getCount(); ++i) {
+                  Class course = new Class();
+                  course.setCode(cursor.getString(cursor.getColumnIndex("pk_course_id")));
+                  course.setCourseGroup(cursor.getString(cursor.getColumnIndex("c_course_group")));
+                  course.setSemester(cursor.getString(cursor.getColumnIndex("c_semester")));
+                  course.setCoreqs(getCoreqs(course.getCode()));
+                  course.setPrereqs(getPrereqs(course.getCode()));
+                  course.setCredits(Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_credits"))));
+                  course.setName(cursor.getString(cursor.getColumnIndex("c_course_name")));
+
+                  if(checkScheduleEligibility(course, semester_count)) {
+                      courses.add(course);
+                      return courses;
+                  }
               }
           }
           return courses;
@@ -721,7 +752,9 @@ public class Database extends SQLiteOpenHelper {
           SQLiteDatabase db = this.getReadableDatabase();
 
           String[] prereqs = course.getPrereqs();
-          String fk_prereqs = "''";
+          String[] parameters = new String[prereqs.length * 2 + 1];
+          String fk_prereqs = "' '";
+          String where_in = " ";
           boolean eligible = false;
 
           if(prereqs.length > 0)
@@ -729,22 +762,63 @@ public class Database extends SQLiteOpenHelper {
               if(prereqs[0].equals("none"))
                   return true;
 
-              fk_prereqs = "'" + prereqs[0] + "'";
+              parameters[0] = "C|" + getCourseGroup(prereqs[0]);
+              parameters[1] = prereqs[0];
+              where_in = "?, ?";
 
               for(int i = 1; i < prereqs.length; i++)
               {
-                  fk_prereqs += ", '" + prereqs[i] + "'";
-
+                  where_in += ", ?, ?";
+                  parameters[i+1] = "C|" + getCourseGroup(prereqs[i]);
+                  parameters[i+2] = prereqs[i];
               }
+
+              parameters[parameters.length - 1] = String.valueOf(semester);
           }
+          else
+            return true;
 
-          String[] parameters = new String[]{fk_prereqs, String.valueOf(semester)};
-          Cursor cursor = db.rawQuery("SELECT * FROM SCHEDULE WHERE fk_course_id IN (?) AND i_semester < ?;", parameters);
+          String stmt = "SELECT * FROM SCHEDULE WHERE fk_course_id IN (" + where_in + ") AND i_semester < ?;";
 
-          if(cursor != null && cursor.getCount() > 0)
-              eligible = true;
+          Cursor cursor = db.rawQuery(stmt, parameters);
+
+          if(cursor.getCount() == prereqs.length)
+             eligible = true;
+          //if(cursor != null && cursor.getCount() == prereqs.length)
+          //    eligible = true;
 
           return eligible;
+      }
+
+      public String getCourseGroup(String course_id)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String[] pk_course_id = {course_id};
+
+          Cursor cursor = db.rawQuery("SELECT c_course_group FROM COURSES WHERE pk_course_id = ?;", pk_course_id);
+
+          if(cursor != null && cursor.getCount() > 0)
+          {
+              cursor.moveToFirst();
+              return cursor.getString(cursor.getColumnIndex("c_course_group"));
+          }
+          else
+          {
+              return "none";
+          }
+
+      }
+
+      public boolean existCoursesForGroup(String course_group)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String[] c_course_group = {"%" + course_group + "%"};
+          Cursor cursor = db.rawQuery("SELECT * FROM COURSES WHERE c_course_group LIKE ?;", c_course_group);
+
+          if(cursor.getCount() > 0)
+              return true;
+          else
+              return false;
       }
 
 	} 
