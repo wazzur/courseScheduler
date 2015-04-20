@@ -171,7 +171,7 @@ public class Database extends SQLiteOpenHelper {
           InputStream is = context.getResources().openRawResource(COURSE_FILE);
           BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 
-          //INSERT COURSES FROM FILE
+          //INSERT COURSES FROM FILE (CHANGE TO READ IN CONTENTS IN ONE GO)
           if(is != null)
           {
               while ((str = reader.readLine()) != null)
@@ -250,6 +250,16 @@ public class Database extends SQLiteOpenHelper {
               cursor.close();
           }
 
+      }
+
+      public void updateChoiceCourse(Class c, int schedule)
+      {
+            SQLiteDatabase db = this.getWritableDatabase();
+            String stmt = "UPDATE SCHEDULE " +
+                    "SET fk_course_id = '" + c.getCode() + "' " +
+                    "WHERE pk_schedule = " + Integer.toString(schedule);
+
+            db.execSQL(stmt);
       }
 
       public void setSemester(int semester, String pk_course_id)
@@ -509,6 +519,7 @@ public class Database extends SQLiteOpenHelper {
           SQLiteDatabase db = this.getReadableDatabase();
           ArrayList<Class> courses = new ArrayList<Class>();
           String semester = getScheduledSemester(c.getPkSchedule());
+          int semester_num = getSemesterNumber(c.getPkSchedule());
           String[] arguments = {"%"+ String.valueOf(c.getCourseGroup()) + "%","%"+ semester + "%"};
 
           Cursor cursor =  db.rawQuery( "SELECT * FROM COURSES WHERE c_course_group LIKE ? AND c_semester LIKE ?;", arguments );
@@ -524,9 +535,11 @@ public class Database extends SQLiteOpenHelper {
                   course.setPrereqs(getPrereqs(course.getCode()));
                   course.setCredits(Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_credits"))));
                   course.setName(cursor.getString(cursor.getColumnIndex("c_course_name")));
-                  courses.add(course);
 
-                  cursor.moveToNext();
+                  if(checkScheduleEligibility(course, semester_num))
+                    courses.add(course);
+                  else
+                    cursor.moveToNext();
               }
           }
           return courses;
@@ -553,6 +566,22 @@ public class Database extends SQLiteOpenHelper {
           }
           else
               return "failed";
+      }
+
+      public int getSemesterNumber(int schedule)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String[] pk_schedule = {String.valueOf(schedule)};
+
+          Cursor cursor = db.rawQuery("SELECT i_semester FROM SCHEDULE WHERE pk_schedule = ?;", pk_schedule);
+
+          if(cursor != null && cursor.getCount() > 0)
+          {
+              cursor.moveToFirst();
+              return Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_semester")));
+          }
+          else
+              return -1;
       }
       public int getCredits(String fk_course_id)
       {
@@ -621,6 +650,7 @@ public class Database extends SQLiteOpenHelper {
                       populateCourseInfo(course);
                       semester[j] = course;
                       cursor.moveToNext();
+                      Log.e("DEBUG", course.getCode());
                   }
               }
               else
@@ -684,6 +714,37 @@ public class Database extends SQLiteOpenHelper {
           SQLiteDatabase db = this.getReadableDatabase();
           String stmt = "DELETE FROM SCHEDULE;";
           db.execSQL(stmt);
+      }
+
+      public boolean checkScheduleEligibility(Class course, int semester)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+
+          String[] prereqs = course.getPrereqs();
+          String fk_prereqs = "''";
+          boolean eligible = false;
+
+          if(prereqs.length > 0)
+          {
+              if(prereqs[0].equals("none"))
+                  return true;
+
+              fk_prereqs = "'" + prereqs[0] + "'";
+
+              for(int i = 1; i < prereqs.length; i++)
+              {
+                  fk_prereqs += ", '" + prereqs[i] + "'";
+
+              }
+          }
+
+          String[] parameters = new String[]{fk_prereqs, String.valueOf(semester)};
+          Cursor cursor = db.rawQuery("SELECT * FROM SCHEDULE WHERE fk_course_id IN (?) AND i_semester < ?;", parameters);
+
+          if(cursor != null && cursor.getCount() > 0)
+              eligible = true;
+
+          return eligible;
       }
 
 	} 

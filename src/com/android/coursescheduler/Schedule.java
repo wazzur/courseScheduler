@@ -480,8 +480,27 @@ public class Schedule {
 			if(i !=0){x+=", ";}
 			x+=co[i];
 		}
-		x+="\n" + "DEBUG: RELEVANCE " + c.getRel();
+
+        if(!c.getCourseGroup().equals("none"))
+            x+= "\n" + "Course Group: " + c.getCourseGroup();
+		//x+="\n" + "DEBUG: RELEVANCE " + c.getRel();
 		
 		return x;
 	}
+
+    public void replaceChoiceClass(Class course, int pk_schedule)
+    {
+        database.updateChoiceCourse(course, pk_schedule);
+        int semester = database.getSemesterNumber(pk_schedule);
+
+        for(int i = 0; i < schedule[semester].length; i++)
+        {
+            if(schedule[semester][i].getPkSchedule() == pk_schedule)
+            {
+                course.setCourseGroup(schedule[semester][i].getCourseGroup());
+                schedule[semester][i] = course;
+                break;
+            }
+        }
+    }
 }
