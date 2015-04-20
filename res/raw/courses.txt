@@ -1,7 +1,7 @@
 MAC1105	3	College Algebra	fall/spring	none	none	none
 MAC1114	2	Trigonometry	fall/spring/summer	MAC1105	none	none
 MAC1140	3	Precalculus	fall/spring	MAC1105	MAC1114	none
-COP3014	3	Programming I	fall/spring	MAC1140	none	CCompetency
+COP3014	3	Programming I	fall/spring	MAC1140	none	ComputerCompetency
 MAC2312	4	Calculus II	fall/spring	MAC2311	none	none
 MAD2104	3	Discrete Math I	fall	COP3014	none	none
 MAD3105	3	Discrete Math II	spring	MAD2104	none	none
@@ -24,37 +24,37 @@ PHY2049C	5	Physics II	spring	PHY2048	none	none
 BSC1005	3	General Biology	fall/spring/summer	none	none	Science
 PSY2012	3	General Psychology	fall/spring/summer	none	none	none
 STA2122	3	Statistics	fall/summer/spring	MAC1105	none	none
-SPN1120	4	Spanish I	fall/spring/summer	none	none	FL1
-SPN1121	4	Spanish II	fall/spring/summer	SPN1120	none	FL2
-SPN2220	4	Spanish III	fall/spring/summer	SPN1121	none	FL3
-GER1120	4	German I	fall/spring/summer	none	none	FL1
-GER1121	4	German II	fall/spring/summer	GER1120	none	FL2
-GER2220	4	German III	fall/spring/summer	GER1121	none	FL3
-FRE1120	4	French I	fall/spring/summer	none	none	FL1
-FRE1121	4	French II	fall/spring/summer	FRE1120	none	FL2
-FRE2220	4	French III	fall/spring/summer	FRE1121	none	FL3
-LAT1120	4	Latin I	fall/spring/summer	none	none	FL1
-LAT1121	4	Latin II	fall/spring/summer	LAT1120	none	FL2
-LAT2220	4	Latin III	fall/spring/summer	LAT1121	none	FL3
+SPN1120	4	Spanish I	fall/spring/summer	none	none	ForeignLanguage1
+SPN1121	4	Spanish II	fall/spring/summer	SPN1120	none	ForeignLanguage2
+SPN2220	4	Spanish III	fall/spring/summer	SPN1121	none	ForeignLanguage3
+GER1120	4	German I	fall/spring/summer	none	none	ForeignLanguage1
+GER1121	4	German II	fall/spring/summer	GER1120	none	ForeignLanguage2
+GER2220	4	German III	fall/spring/summer	GER1121	none	ForeignLanguage3
+FRE1120	4	French I	fall/spring/summer	none	none	ForeignLanguage1
+FRE1121	4	French II	fall/spring/summer	FRE1120	none	ForeignLanguage2
+FRE2220	4	French III	fall/spring/summer	FRE1121	none	ForeignLanguage3
+LAT1120	4	Latin I	fall/spring/summer	none	none	ForeignLanguage1
+LAT1121	4	Latin II	fall/spring/summer	LAT1120	none	ForeignLanguage2
+LAT2220	4	Latin III	fall/spring/summer	LAT1121	none	ForeignLanguage3
 PSY3213c	4	Research Methods In Psychology	fall/summer/spring	PSY2012	STA2122	Research
-PSB2000	3	Brain and Behavior	fall/spring/summer	none	none	Neuro
-PSB4461	3	Hormones and Behavior	fall/spring	PSY2012,PSB2000 	none	Neuro
-EXP3203c	4	Animal Sensory Processes	fall/spring	PSY3213c	none	Neuro
-PSB3004c	4	Physiological Psychology	fall/spring	PSY3213c	none	Neuro,LLCombo
-EXP3202c	4	Sensation and Perception	fall/spring	PSY3213c	none	Neuro,LLCombo
-SOP3004	3	Social Psychology	fall/spring/summer	none	none	Soc,Cog,Dev
-EXP2020	3	Mind and Cognition	fall/spring/summer	none	none	Soc,Cog,Dev
-EXP4640	3	Psychology of Language	spring	PSY2012	none	Soc,Cog,Dev
-EXP4404	3	Human Memory and Learning	fall	PSY2012	none	Soc,Cog,Dev
-EXP3604c	4	Cognitive Psychology		fall/spring/summer PSY3213c	none	Soc,Cog,Dev,LLCombo
-DEP3103	3	Child Psychology	fall/spring/summer	PSY2012	none	Soc,Cog,Dev
-DEP4404	3	Adult Psychology	fall/spring/summer	PSY2012	none	Soc,Cog,Dev
-EXP3422c	4	Conditioning and Learning	fall/spring/summer	PSY3213c	none	LLCombo
+PSB2000	3	Brain and Behavior	fall/spring/summer	none	none	NeuroScience
+PSB4461	3	Hormones and Behavior	fall/spring	PSY2012,PSB2000 	none	NeuroScience
+EXP3203c	4	Animal Sensory Processes	fall/spring	PSY3213c	none	NeuroScience
+PSB3004c	4	Physiological Psychology	fall/spring	PSY3213c	none	NeuroScience,Lecture&LabCombo
+EXP3202c	4	Sensation and Perception	fall/spring	PSY3213c	none	NeuroScience,Lecture&LabCombo
+SOP3004	3	Social Psychology	fall/spring/summer	none	none	Social,Cognitive,Development
+EXP2020	3	Mind and Cognition	fall/spring/summer	none	none	Social,Cognitive,Development
+EXP4640	3	Psychology of Language	spring	PSY2012	none	Social,Cognitive,Development
+EXP4404	3	Human Memory and Learning	fall	PSY2012	none	Social,Cognitive,Development
+EXP3604c	4	Cognitive Psychology		fall/spring/summer PSY3213c	none	Social,Cognitive,Development,Lecture&LabCombo
+DEP3103	3	Child Psychology	fall/spring/summer	PSY2012	none	Social,Cognitive,Development
+DEP4404	3	Adult Psychology	fall/spring/summer	PSY2012	none	Social,Cognitive,Development
+EXP3422c	4	Conditioning and Learning	fall/spring/summer	PSY3213c	none	Lecture&LabCombo
 CHM1045	3	General ChemistryI	fall/spring	none	none	Science
-COP3252	3	Java Programming	fall/spring	COP3330	none	PL
-CIS4930	3	Mobile Programming	fall/spring	COP3330	none	PL
-COP4613	3	RealTime Systems	fall/spring	COP4530	none	AE,CS
-COP4380	3	Reactive System Programming	fall/spring	COP4530	COP4610	AE,CS
-SPA2020	3	Effective Oral Communication	fall/spring/summer	none	none	OCompetency
+COP3252	3	Java Programming	fall/spring	COP3330	none	ProgrammingLanguage
+CIS4930	3	Mobile Programming	fall/spring	COP3330	none	ProgrammingLanguage
+COP4613	3	RealTime Systems	fall/spring	COP4530	none	AdvancedElective,ComputerScience
+COP4380	3	Reactive System Programming	fall/spring	COP4530	COP4610	AdvancedElective,ComputerScience
+SPA2020	3	Effective Oral Communication	fall/spring/summer	none	none	OralCompetency
 ENC1101	3	Freshman Composition and Rhetoric	fall/spring/summer	none	none	none
 ENC1102	3	Freshman Writing, Reading, and Research	fall/spring/summer	ENC1101	none	none	
