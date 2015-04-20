@@ -521,9 +521,20 @@ public class Database extends SQLiteOpenHelper {
           ArrayList<Class> courses = new ArrayList<Class>();
           String semester = getScheduledSemester(c.getPkSchedule());
           int semester_num = getSemesterNumber(c.getPkSchedule());
-          String[] arguments = {"%"+ String.valueOf(c.getCourseGroup()) + "%","%"+ semester + "%"};
+          String[] course_group = c.getCourseGroup().split(",");
+          String[] arguments = new String[course_group.length + 1];
+          String where_like = "c_course_group LIKE ? ";
 
-          Cursor cursor =  db.rawQuery( "SELECT * FROM COURSES WHERE c_course_group LIKE ? AND c_semester LIKE ?;", arguments );
+          arguments[0] = "%" + course_group[0] + "%";
+          for(int i = 1; i < course_group.length; i++)
+          {
+              arguments[i] = course_group[i];
+              where_like += "OR c_course_group LIKE ?";
+          }
+          arguments[arguments.length - 1] = "%" + semester + "%";
+
+          String stmt = "SELECT DISTINCT * FROM COURSES WHERE " + where_like + " AND c_semester LIKE ?;";
+          Cursor cursor =  db.rawQuery(stmt, arguments );
 
           if(cursor != null && cursor.getCount() > 0) {
               cursor.moveToFirst();
