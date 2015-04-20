@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.sql.SQLClientInfoException;
 import java.util.ArrayList;
 
 public class Database extends SQLiteOpenHelper {
@@ -656,10 +657,10 @@ public class Database extends SQLiteOpenHelper {
       public Class[][] getFullSchedule(int total_semesters)
       {
           SQLiteDatabase db = this.getReadableDatabase();
-          Class[][] schedule = new Class[total_semesters][];
+          Class[][] schedule = new Class[total_semesters + 1][];
           Class[] semester = new Class[1];
 
-          for(int i = 0; i < total_semesters; i++)
+          for(int i = 0; i <= total_semesters; i++)
           {
               String[] i_semester = {String.valueOf(i)};
               Cursor cursor = db.rawQuery("SELECT * FROM SCHEDULE WHERE i_semester = ?;", i_semester);
