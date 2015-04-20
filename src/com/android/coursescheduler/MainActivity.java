@@ -37,25 +37,11 @@ import android.widget.TableRow;
 import android.widget.TextView;
 public class MainActivity extends ActionBarActivity  implements NavigationDrawerFragment.NavigationDrawerCallbacks{
 
-     /*
-	Schedule s;	// user schedule variable
-	TextView gpaText;		
-	final Context context = this;
-	int credits, semester;	
-	Class nextSemester[];	// next semester of classes
-	LinearLayout tempLayout, layout;	// these variables are our layouts
-	LinearLayout.LayoutParams layoutParams;	
-	Button creditsButton, courseButton, makeSchedule;	// credits button, general class button, and make schedule buttons
-	GradientDrawable gDraw;
-    Database database;
-	boolean clearSchedule;		// to check if schedule exists to remake.
-    boolean first_time_run;*/
-
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private mainFragment mainFrag;
-
+    private static final String[] MAJOR_NAMES = {"Computer Science", "Psychology"};
     private CharSequence mTitle;
-
+    private String major = "Computer Science";
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
@@ -75,25 +61,32 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                      .commit();
                      */
             LayoutInflater li = LayoutInflater.from(this);
-            View w = li.inflate(R.layout.window, null);	// popup window
+            View w = li.inflate(R.layout.choose_major, null);	// popup window
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setView(w);
-            final TextView classInfo = (TextView) w.findViewById(R.id.info);
+            final ListView majors = (ListView) w.findViewById(R.id.majorList);
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, R.layout.choose_class_row, MAJOR_NAMES);
+
+            majors.setAdapter(adapter);
             //final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
 
             // sets class info as popup window text
             //classInfo.setText(s.printClass(c));
             // set dialog message
-            alert.setCancelable(false).setPositiveButton("Update GPA",
+            majors.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                public void onItemClick(AdapterView<?> parent, View view,
+                                        int position, long id) {
+
+                    Object o = majors.getItemAtPosition(position);
+                    major = (String) o;//As you are using Default String Adapter
+                }
+            });
+
+            alert.setCancelable(false).setPositiveButton("Select Major",
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog,int id)
                         {
-                            // allows user to input a grade to be updated with positive button
-                            //Editable inpt = userInput.getText();
-                            //c.setGrade(inpt.toString());
-                            //if(c.getGrade() != null){
-                            //  gpaText.setText("GPA: "+s.calcGPA());
-                            //}
+
                         }
                     })
                     .setNegativeButton("Cancel",
@@ -146,258 +139,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         mainFrag = mainFrag.newInstance(1);
-        // initializes necessary variables
-
-        /*
-        //credits button
-        creditsButton.setOnClickListener(new View.OnClickListener() {
-			@SuppressLint("InflateParams") @Override
-			public void onClick(View v) {
-				// sets up popup variables
-				LayoutInflater layoutInflater = LayoutInflater.from(context);
-				View promptsView = layoutInflater.inflate(R.layout.prompts, null);
-				AlertDialog.Builder alert = new AlertDialog.Builder(context);
-				alert.setView(promptsView);
-				final EditText userInput;
-				userInput=(EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
-				
-				// set dialog message values for our alert message
-				alert.setCancelable(false).setPositiveButton("OK",	// ok creates an onclick
-					  new DialogInterface.OnClickListener() {		// listener to refresh values
-					    public void onClick(DialogInterface dialog,int id) 
-					    {		// reads user input into credits variable and refreshes UI
-					    		// TODO: error checking.
-					    	Editable inpt = userInput.getText();
-					    	credits = Integer.parseInt(inpt.toString());
-					    	creditsButton.setText("MinCredits: " + credits);
-					    }
-					  })
-					.setNegativeButton("Cancel",
-					  new DialogInterface.OnClickListener() {
-					    public void onClick(DialogInterface dialog,int id) {dialog.cancel();}});
-				
-				// creates the alert message
-				AlertDialog ad = alert.create();
-				ad.show();	// shows alert message to screen
-				
-			}
-		});
-
-
-        
-        //make schedule button
-        makeSchedule.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				// checks if shedule exists and needs to be removed
-				if(clearSchedule){
-					layout.removeView(tempLayout);
-					s.reset();
-                    database.clearSchedule();
-				}
-				// makes schedule based on credits variable
-                if(!first_time_run)
-                    s = new Schedule("Computer Science", database);
-
-                makeButtons(s.makeSchedule(credits));
-				clearSchedule = true;	// ensures schedule is cleared next time user clicks schedule
-			}
-		});
-
-        */
     }
-
-     /*
-	private void initialize() {
-		//initialize necessary variables
-        database = new Database(this); //Initialize the database
-        if(database.isInitialized())
-            first_time_run = false;
-        else
-            first_time_run = true;
-        //database.clearTables();
-        Log.e("DEBUG", "Init DB");
-        try {
-            if (first_time_run)
-                database.readData(this);
-        }
-        catch (IOException e)
-        {
-            Log.e("IOException", e.toString());
-
-        }
-
-        makeSchedule = (Button) findViewById(R.id.makeSchedule);
-        layoutParams = new LinearLayout.LayoutParams(
-	            LinearLayout.LayoutParams.WRAP_CONTENT,
-	            LinearLayout.LayoutParams.WRAP_CONTENT);
-        layout = (LinearLayout) getParent().findViewById(R.id.LL);
-        gpaText  = (TextView) findViewById(R.id.gpaView);
-        creditsButton = (Button) findViewById(R.id.credBtn);
-        gDraw = new GradientDrawable();
-		gDraw.setShape(GradientDrawable.RECTANGLE);
-		gDraw.setStroke(5, Color.parseColor("#540115"));
-		gDraw.setColor(Color.parseColor("#CDC092"));
-		clearSchedule = false;	// nothing to clear first time making schedule.
-		credits = 12;	// standard schedule floor
-        String contents ="";   	// empty file contents
-
-        if(first_time_run) {
-            s = new Schedule("Computer Science", database);
-        }
-        else
-        {
-            s = new Schedule(database);
-            makeButtons(s.getSchedule());
-        }
-
-
-	}
-
-	void makeButtons(final Class[][] schedule){	 
-		// this function/method creates the buttons for each class in our schedule
-		
-		//initializes variables
-    	semester = 0;
-    	layoutParams.setMargins(20, 20, 20, 20);
-    	tempLayout = new LinearLayout(this);		// L = layout
-		tempLayout.setOrientation(LinearLayout.VERTICAL);
-    	TableLayout table = new TableLayout(this);	// table of buttons
-    	table.setLayoutParams(new TableLayout.LayoutParams(10,2));	// 2 per row
-    	TableRow row = null;		// maximum of 10 rows (should be excessive)
-    	int buttonCounter = 0;
-    	
-    	// iterates through the schedule to print the buttons to layout
-    	// exit if schedule nulls for any reason, this should never happen
-    	for(int sem=0; sem<schedule.length; sem++) {
-            //if(schedule[sem] == null){	break;	}
-            semBreak();                                // creates a visual break between semesters
-            if(schedule[sem] != null)
-            {
-                for (int course = 0; course < schedule[sem].length; course++) {    // iterates through each semester and prints
-                    if (buttonCounter % 2 == 0) {    // corrects UI alignment if button ended in an odd number
-                        row = new TableRow(this);
-                        row.setPadding(5, 5, 5, 5);
-                        row.setDividerDrawable(getWallpaper());
-                    }
-                    if (schedule[sem][course] != null) {                // verifies class existance
-                        courseButton = new Button(this);                // creates new button
-
-                        if(schedule[sem][course].getCode().equals("C"))
-                            courseButton.setText(schedule[sem][course].getCourseGroup());
-                        else
-                            courseButton.setText(schedule[sem][course].getCode());        // sets button name to class code
-
-                        courseButton.setId(course);                        // sets button reference id
-                        courseButton.setGravity(Gravity.CENTER);        // centralizes button gravity
-                        courseButton.setBackground(gDraw);                // sets background
-                        row.addView(courseButton, 185, 115);            // adds button to our table row
-                        buttonCounter++;                            // incremenets button counter
-
-                        // adds the row to the table
-                        if (buttonCounter % 2 == 0 && buttonCounter != 0) {
-                            table.addView(row, layoutParams);
-                        }
-
-                        //allows click-ability of dynamically creates buttons
-                        final int s = sem;
-                        final int c = course;
-                        courseButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                classBtn(schedule[s][c]);
-                            }
-                        });
-                    }
-                }    // corrects UI if necessary
-                if (buttonCounter % 2 == 1) {
-                    courseButton = new Button(this);
-                    courseButton.setVisibility(View.GONE);
-                    row.addView(courseButton);
-                    table.addView(row, layoutParams);
-                    buttonCounter++;
-                }
-                //tempLayout.addView(table);
-                //Log.e("test", String.valueOf(layoutParams) );
-                tempLayout.addView(table, layoutParams);
-                table = new TableLayout(this);
-                table.setLayoutParams(new TableLayout.LayoutParams(10, 2));
-            }
-    	}	// corrects UI if necessary
-    	if(buttonCounter%2==1){
-			courseButton = new Button(this);
-			courseButton.setVisibility(View.GONE);
-			row.addView(courseButton);
-			table.addView(row, layoutParams);
-			tempLayout.addView(table, layoutParams);
-		}
-        layout.addView(tempLayout);
-        Log.e("test2", String.valueOf(layoutParams) );
-    	//layout.addView(tempLayout, layoutParams);
-    	addText("Graduation!");	// prints graduation message
-        clearSchedule = true;
-    }
-    
-	void classBtn(final Class c){
-		//this function/method creates the functionality of clicking a class button
-		
-		// initializes variable for our alert button.
-		LayoutInflater li = LayoutInflater.from(context);
-		View w = li.inflate(R.layout.window, null);	// popup window
-		AlertDialog.Builder alert = new AlertDialog.Builder(context);
-		alert.setView(w);
-		final TextView classInfo = (TextView) w.findViewById(R.id.info);
-		final EditText userInput = (EditText) w.findViewById(R.id.editGrade);
-		
-		// sets class info as popup window text
-		classInfo.setText(s.printClass(c));
-		// set dialog message
-		alert.setCancelable(false).setPositiveButton("Update GPA",
-			  new DialogInterface.OnClickListener() {
-			    public void onClick(DialogInterface dialog,int id) 
-			    {
-			    	// allows user to input a grade to be updated with positive button
-			    	Editable inpt = userInput.getText();
-			    	c.setGrade(inpt.toString());
-			    	if(c.getGrade() != null){
-			    		gpaText.setText("GPA: "+s.calcGPA());
-			    	}
-			    }
-			  })
-			.setNegativeButton("Cancel",
-			  new DialogInterface.OnClickListener() {
-			    public void onClick(DialogInterface dialog,int id) {dialog.cancel();}});
-		
-		//creates and shows alert for user input
-		AlertDialog ad = alert.create();
-		ad.show();
-	}
-    
-    void addText(String txt){
-    	// adds string variable text to UI layout.
-    	TextView t = new TextView(this);
-    	t.setGravity(Gravity.CENTER);
-    	t.setTextColor(Color.parseColor("#CDC092"));
-		t.setText(txt);
-		tempLayout.addView(t, layoutParams);
-    }
-    
-    void semBreak(){
-    	String txt;
-    	int c = (1+(semester/3));
-    	if(semester%3==0){	txt = "Fall Semester " + c;
-    	}else if(semester%3==1){	txt = "Spring Semester "+c;	}
-        else { txt = "Summer Semester "+c; }
-    	TextView t = new TextView(this);
-    	t.setPadding(75, 0, 0, 0);
-    	t.setGravity(Gravity.CENTER);
-    	t.setTextColor(Color.parseColor("#CDC092"));
-		t.setText(txt);
-		tempLayout.addView(t, layoutParams);
-		semester++;
-    }
-
-     */
 
     public static class mainFragment extends Fragment {
         /**
@@ -535,7 +277,6 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                 Log.e("IOException", e.toString());
 
             }
-
 
             layoutParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.WRAP_CONTENT,
