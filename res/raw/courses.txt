@@ -115,3 +115,8 @@ ARH3130	3	Survey of Greek Art and Archeology	fall	none	none	Humanities
 ARH3150	3	Art and Archeology of Ancient Italy	spring	none	none	Humanities
 IFS2006	3	Citizenship and Debate	fall/spring	none	none	Humanities
 IFS2010	3	American GI in World War II	fall/spring	none	none	Humanities
+HUM2210	3	Prehistory to late antiquity	fall/spring/summer	none	none	Humanities
+HUM2235	3	From Renaisance to the enlightenment	fall/spring/summer	none	none	Humanities
+HUM2250	3	Eighteenth Century Romanticism to Postmodernsim	fall/spring/summer	none	none	Humanities
+HUM3321	3	Multicutural Dimensions of Film	fall/spring/summer	none	none	Humanities
+IFS2013	3	Reality and Illusion in Wolrd Cinema	fall/spring	none	none	Humanities
