@@ -26,6 +26,7 @@ import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -65,8 +66,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ExpandableListView mDrawerScheduleInfo;
     private LinearLayout mFragmentLayout;
     private View mFragmentContainerView;
-    private Button mButton;
-
+    private Button mDrawerGenerateSchedule;
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
@@ -108,13 +108,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView = (ListView) mFragmentLayout.findViewById(R.id.navList);
         mDrawerScheduleInfo = (ExpandableListView) mFragmentLayout.findViewById(R.id.currentSchedule);
-        mButton = (Button) mFragmentLayout.findViewById(R.id.button);
-
-        mButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-            }
-        });
+        mDrawerGenerateSchedule = (Button) mFragmentLayout.findViewById(R.id.btnGenerate);
 
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -129,8 +123,7 @@ public class NavigationDrawerFragment extends Fragment {
                 R.id.rowTextView,
                 new String[]{
                         "Choose Major",
-                        "Set Credits",
-                        "Generate Schedule"
+                        "Set Credits Per Semester",
 
                 }));
         ArrayList<String> parent = new ArrayList<String>();
@@ -138,9 +131,9 @@ public class NavigationDrawerFragment extends Fragment {
 
         parent.add("Current Scheudule Info");
         List<String> dummy_info = new ArrayList<String>();
-        dummy_info.add("Major: Computer Science");
-        dummy_info.add("Credits Per Semester: 12");
-        dummy_info.add("Overall GPA: 4.0");
+        dummy_info.add("Major: ");
+        dummy_info.add("Credits Per Semester: ");
+        dummy_info.add("Overall GPA: ");
 
         children.put(parent.get(0), dummy_info);
 
@@ -158,6 +151,64 @@ public class NavigationDrawerFragment extends Fragment {
         return mDrawerLayout != null && mDrawerLayout.isDrawerOpen(mFragmentContainerView);
     }
 
+    public void openDrawer()
+    {
+        mDrawerLayout.openDrawer(mFragmentContainerView);
+    }
+
+    public void closeDrawer()
+    {
+        mDrawerLayout.closeDrawer(mFragmentContainerView);
+    }
+
+    public String getMajor()
+    {
+        TextView info =(TextView) mDrawerScheduleInfo.getChildAt(1).findViewById(R.id.rowTextView);
+        return info.getText().toString();
+    }
+
+    public int getCredits()
+    {
+        TextView info =(TextView) mDrawerScheduleInfo.getChildAt(2).findViewById(R.id.rowTextView);
+        String[] credit_row = info.getText().toString().split(":");
+
+        if(credit_row.length == 2)
+        {
+            return Integer.parseInt(credit_row[1].trim());
+        }
+        else
+            return -1;
+    }
+
+    public Button getBtnGenerate()
+    {
+        return mDrawerGenerateSchedule;
+    }
+
+    public TextView getScheduleInfo(int i)
+    {
+        return(TextView) mDrawerScheduleInfo.getChildAt(i).findViewById(R.id.rowTextView);
+    }
+
+    public void setScheduleInfo(ExpandableListView info)
+    {
+        mDrawerScheduleInfo = info;
+    }
+
+    public void setMajor(String major)
+    {
+        TextView info =(TextView) mDrawerScheduleInfo.getChildAt(1).findViewById(R.id.rowTextView);
+        info.setText("Major: " + major);
+    }
+
+    public void setCredits(String credits, String maj)
+    {
+        TextView info =(TextView) mDrawerScheduleInfo.getChildAt(2).findViewById(R.id.rowTextView);
+        TextView major =(TextView) mDrawerScheduleInfo.getChildAt(1).findViewById(R.id.rowTextView);
+
+        info.setText("Credits Per Semester: " + credits);
+        major.setText(maj);
+    }
     /**
      * Users of this fragment must call this method to set up the navigation drawer interactions.
      *
@@ -232,7 +283,6 @@ public class NavigationDrawerFragment extends Fragment {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
 
-
     private void selectItem(int position) {
         mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
@@ -291,12 +341,12 @@ public class NavigationDrawerFragment extends Fragment {
         if (mDrawerToggle.onOptionsItemSelected(item)) {
             return true;
         }
-
+        /*
         if (item.getItemId() == R.id.action_example) {
             Toast.makeText(getActivity(), "Example action.", Toast.LENGTH_SHORT).show();
             return true;
         }
-
+        */
         return super.onOptionsItemSelected(item);
     }
 

@@ -389,7 +389,6 @@ public class Database extends SQLiteOpenHelper {
               course.setCourseGroup(course_group[1]);
           }
 
-
       }
 	  
 	  
