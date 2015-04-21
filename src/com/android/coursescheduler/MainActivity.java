@@ -201,6 +201,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
         LinearLayout.LayoutParams layoutParams;
         Button courseButton;	// credits button, general class button, and make schedule buttons
         GradientDrawable gDraw;
+        GradientDrawable gDrawTaken;
         Database database;
         boolean clearSchedule;		// to check if schedule exists to remake.
         boolean first_time_run;
@@ -362,6 +363,12 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             gDraw.setShape(GradientDrawable.RECTANGLE);
             gDraw.setStroke(5, Color.parseColor("#540115"));
             gDraw.setColor(Color.parseColor("#CDC092"));
+
+            gDrawTaken = new GradientDrawable();
+            gDrawTaken.setShape(GradientDrawable.RECTANGLE);
+            gDrawTaken.setStroke(5, Color.parseColor("#540115"));
+            gDrawTaken.setColor(Color.parseColor("#FF807344"));
+
             clearSchedule = false;	// nothing to clear first time making schedule.
             credits = 12;	// standard schedule floor
             String contents ="";   	// empty file contents
@@ -420,10 +427,11 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                             else
                                 courseButton.setText(schedule[sem][course].getCode());        // sets button name to class code
 
-                            courseButton.setBackground(gDraw);                // sets background
-
                             if(schedule[sem][course].isTaken() == 1)
-                                courseButton.setBackgroundColor(0XFFDDDCDB);
+                                courseButton.setBackground(gDrawTaken);
+                            else
+
+                                courseButton.setBackground(gDraw);                // sets background
 
                             courseButton.setId(course);                        // sets button reference id
                             courseButton.setGravity(Gravity.CENTER);        // centralizes button gravity
