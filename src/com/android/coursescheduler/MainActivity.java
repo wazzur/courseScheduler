@@ -407,7 +407,8 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                             courseButton.setId(course);                        // sets button reference id
                             courseButton.setGravity(Gravity.CENTER);        // centralizes button gravity
                             courseButton.setBackground(gDraw);                // sets background
-                            row.addView(courseButton, 185, 115);            // adds button to our table row
+                            courseButton.setMaxLines(1);
+                            row.addView(courseButton, 300, 225);            // adds button to our table row
                             buttonCounter++;                            // incremenets button counter
 
                             // adds the row to the table
