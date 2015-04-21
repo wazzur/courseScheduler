@@ -21,5 +21,16 @@
         <requestFocus />
  
     </EditText>
- 
+
+    <Button
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="Set Credits"
+        android:id="@+id/setCredits"
+        android:layout_gravity="center_horizontal"
+        android:background="#ffe3e3e3"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:layout_margin="0dp"
+        android:padding="0dp" />
+
 </LinearLayout>
