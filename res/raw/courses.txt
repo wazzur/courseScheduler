@@ -110,3 +110,8 @@ AML2600	3	Intro To African American Literature	fall/spring/summer	none	none	Lite
 AML3041	3	American Authors since 1875	fall/spring/summer	none	none	Literacy
 AML3311	3	Major Figures in American Literature	fall/spring/summer	none	none	Literacy
 AML3682	3	American Multi Ethnic Literature	fall/spring	none	none	Literacy
+ARH2090	3	Great Discoveries in World Architecture	fall/spring	none	none	Humanities
+ARH3130	3	Survey of Greek Art and Archeology	fall	none	none	Humanities
+ARH3150	3	Art and Archeology of Ancient Italy	spring	none	none	Humanities
+IFS2006	3	Citizenship and Debate	fall/spring	none	none	Humanities
+IFS2010	3	American GI in World War II	fall/spring	none	none	Humanities
