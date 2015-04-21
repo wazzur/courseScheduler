@@ -409,10 +409,11 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                         Log.e("mak buttons iterate", String.valueOf(course));
                         if (buttonCounter % 2 == 0) {    // corrects UI alignment if button ended in an odd number
                             row = new TableRow(getActivity());
-                            row.setPadding(5, 5, 5, 5);
+                            //row.setPadding(5, 5, 5, 5);
                             //row.setDividerDrawable(getWallpaper());
                         }
                         if (schedule[sem][course] != null) {                // verifies class existance
+                            row.setPadding(5, 5, 5, 5);
                             courseButton = new Button(getActivity());                // creates new button
 
                             if(schedule[sem][course].getCode().equals("C"))
@@ -678,7 +679,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             }else if(semester%3==1){	txt = "Spring Semester "  + c;	}
             else { txt = "Summer Semester "+c; }
             TextView t = new TextView(getActivity());
-            t.setPadding(175, 0, 0, 0);
+            t.setPadding(300, 0, 0, 0);
             t.setGravity(Gravity.CENTER);
             t.setTextColor(Color.parseColor("#CDC092"));
             t.setText(txt);
