@@ -214,7 +214,7 @@ public class Schedule {
 		int semesterCounter =0;
 		schedule = new Class[100][];	// creates a large matrix to later be resized
 		// loops until all classes are taken
-		while(!allTaken(classes)){
+		while((!allTaken(classes)) && (semesterCounter < 99)){
 			Class sem[] = getSemester(credits, currentSemester, semesterCounter);	// finds next consecutive semester
 			currentSemester++;	// represents time semesters passing
 			currentSemester%=3;	// mods value to adjust to account for fall + spring + summer
