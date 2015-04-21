@@ -14,4 +14,3 @@ C	ForeignLanguage2
 C	ForeignLanguage3
 C	ComputerCompetency
 C	OralCompetency
-Minor
