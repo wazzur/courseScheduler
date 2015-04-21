@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.Button;
 import android.widget.ExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.LinearLayout;
@@ -64,6 +65,7 @@ public class NavigationDrawerFragment extends Fragment {
     private ExpandableListView mDrawerScheduleInfo;
     private LinearLayout mFragmentLayout;
     private View mFragmentContainerView;
+    private Button mButton;
 
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
@@ -88,7 +90,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         // Select either the default item (0) or the last selected item.
         //selectItem(mCurrentSelectedPosition);
-       selectItem(1);
+       //selectItem(1);
     }
 
     @Override
@@ -106,6 +108,13 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerListView = (ListView) mFragmentLayout.findViewById(R.id.navList);
         mDrawerScheduleInfo = (ExpandableListView) mFragmentLayout.findViewById(R.id.currentSchedule);
+        mButton = (Button) mFragmentLayout.findViewById(R.id.button);
+
+        mButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+            }
+        });
 
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -120,7 +129,8 @@ public class NavigationDrawerFragment extends Fragment {
                 R.id.rowTextView,
                 new String[]{
                         "Choose Major",
-                        "test drawer 2",
+                        "Set Credits",
+                        "Generate Schedule"
 
                 }));
         ArrayList<String> parent = new ArrayList<String>();
@@ -221,6 +231,7 @@ public class NavigationDrawerFragment extends Fragment {
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);
     }
+
 
     private void selectItem(int position) {
         mCurrentSelectedPosition = position;

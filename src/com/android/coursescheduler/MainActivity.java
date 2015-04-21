@@ -47,13 +47,52 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
 
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        //FragmentManager fragmentManager = getSupportFragmentManager();
 
         if (position == 1)
         {
-            fragmentManager.beginTransaction()
-                    .replace(R.id.container, mainFrag.newInstance(1))
-                    .commit();
+            //fragmentManager.beginTransaction()
+              //      .replace(R.id.container, mainFrag.newInstance(1))
+                //    .commit();
+            // sets up popup variables
+            LayoutInflater layoutInflater = LayoutInflater.from(this);
+            View promptsView = layoutInflater.inflate(R.layout.prompts, null);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setView(promptsView);
+            final EditText userInput;
+            userInput=(EditText) promptsView.findViewById(R.id.editTextDialogUserInput);
+            int credits;
+
+            // set dialog message values for our alert message
+            alert.setCancelable(false).setPositiveButton("OK",	// ok creates an onclick
+                    new DialogInterface.OnClickListener() {		// listener to refresh values
+                        public void onClick(DialogInterface dialog,int id)
+                        {		// reads user input into credits variable and refreshes UI
+                            // TODO: error checking.
+                            Editable inpt = userInput.getText();
+                            FragmentManager fm = getSupportFragmentManager();
+                            mainFragment fragment = (mainFragment) fm.findFragmentByTag("mainFrag");
+
+                            fragment.setCredits(Integer.parseInt(inpt.toString()));
+                            //credits = Integer.parseInt(inpt.toString());
+                            //creditsButton.setText("MinCredits: " + credits);
+                        }
+                    })
+                    .setNegativeButton("Cancel",
+                            new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {dialog.cancel();}});
+
+            // creates the alert message
+            AlertDialog ad = alert.create();
+            ad.show();	// shows alert message to screen
+
+
+        }
+        else if (position == 2)
+        {
+            FragmentManager fm = getSupportFragmentManager();
+            mainFragment fragment = (mainFragment) fm.findFragmentByTag("mainFrag");
+            fragment.generateSchedule();
         }
         else {
              /*fragmentManager.beginTransaction()
@@ -127,6 +166,10 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, mainFrag.newInstance(1), "mainFrag")
+                .commit();
         //initialize();
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -183,10 +226,6 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-
-
-
-
             //View rootView = inflater.inflate(R.layout.activity_main, container, false);
 
             if (rootView != null) {
@@ -200,6 +239,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             }
 
             initialize();
+
 
 
             //credits button
@@ -233,6 +273,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                     AlertDialog ad = alert.create();
                     ad.show();	// shows alert message to screen
 
+                    Log.e("credits: ", String.valueOf(credits));
                 }
             });
 
@@ -240,6 +281,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             makeSchedule.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    /*
                     // checks if shedule exists and needs to be removed
                     if(clearSchedule){
                         layout.removeView(tempLayout);
@@ -252,10 +294,34 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
 
                     makeButtons(s.makeSchedule(credits));
                     clearSchedule = true;	// ensures schedule is cleared next time user clicks schedule
+                    */
+                    generateSchedule();
                 }
             });
 
             return rootView;
+        }
+
+        public void setCredits(int tempCredits)
+        {
+            credits = tempCredits;
+            Log.e("credits: ", String.valueOf(credits) + " " + tempCredits);
+        }
+
+        public void generateSchedule()
+        {
+            // checks if shedule exists and needs to be removed
+            if(clearSchedule){
+                layout.removeView(tempLayout);
+                s.reset();
+                database.clearSchedule();
+            }
+            // makes schedule based on credits variable
+            if(!first_time_run)
+                s = new Schedule("Computer Science", database);
+
+            makeButtons(s.makeSchedule(credits));
+            clearSchedule = true;	// ensures schedule is cleared next time user clicks schedule
         }
 
 
