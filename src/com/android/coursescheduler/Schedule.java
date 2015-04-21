@@ -92,6 +92,8 @@ public class Schedule {
 		if(requisites == null){	return;	}
 		for(int i=0; i<requisites.length; i++){
 			Class c = findClass(requisites[i]);	// finds class
+            if(c == null)
+                return;
 			c.RelUp();					// increments relevance
 			setRelevance(c);			// sets relevance
 		}
@@ -124,9 +126,11 @@ public class Schedule {
 		}
 		if(!c.getCoreqs(0).toLowerCase().contains("none")){
 			for(int i=0; i<c.getCoreqs().length; i++){
-				if(!findClass(c.getCoreqs(i)).isScheduled() && !contains(semester, c)){
-					return false;
-				}
+                if(findClass(c.getCoreqs(i)) != null) {
+                    if (!findClass(c.getCoreqs(i)).isScheduled() && !contains(semester, c)) {
+                        return false;
+                    }
+                }
 			}
 			soFar = true;
 		}

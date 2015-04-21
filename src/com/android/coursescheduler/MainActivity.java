@@ -42,7 +42,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private mainFragment mainFrag;
-    private static final String[] MAJOR_NAMES = {"Computer Science", "Psychology"};
+    private static final String[] MAJOR_NAMES = {"Computer Science", "Psychology", "English"};
     private CharSequence mTitle;
     private int cred = 0;
     private String major = "Computer Science";
