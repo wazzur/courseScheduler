@@ -9,7 +9,7 @@ C	Lecture&LabCombo
 C	Lecture&LabCombo
 C	Elective,Psychology	
 C	Elective,Psychology	
-C	Elective,psychology	
+C	Elective,Psychology	
 C	Elective,Psychology	
 C	Elective,Psychology	
 C	Elective,Psychology	
