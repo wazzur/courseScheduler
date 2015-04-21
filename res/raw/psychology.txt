@@ -7,12 +7,12 @@ C	Social,Cognitive,Development
 C	Social,Cognitive,Development
 C	Lecture&LabCombo
 C	Lecture&LabCombo
-C	Elective,Psychology	// not supported yet
-C	Elective,Psychology	// no classes in database
-C	Elective,psychology	// carry this tag yet
-C	Elective,Psychology	// we need to fill this gap
-C	Elective,Psychology	// before these can be used
-C	Elective,Psychology	//(general psychology electives)
+C	Elective,Psychology	
+C	Elective,Psychology	
+C	Elective,psychology	
+C	Elective,Psychology	
+C	Elective,Psychology	
+C	Elective,Psychology	
 C	ForeignLanguage1
 C	ForeignLanguage2
 C	ForeignLanguage3
