@@ -42,7 +42,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private mainFragment mainFrag;
-    private static final String[] MAJOR_NAMES = {"Computer Science", "Psychology", "English"};
+    private static final String[] MAJOR_NAMES = {"Computer Science", "Psychology"};
     private CharSequence mTitle;
     private int cred = 0;
     private String major = "Computer Science";
@@ -181,6 +181,11 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
 
     }
 
+    public double getGPA()
+    {
+        return mainFrag.getGPA();
+    }
+
     public static class mainFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
@@ -200,6 +205,8 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
         boolean clearSchedule;		// to check if schedule exists to remake.
         boolean first_time_run;
         String major;
+        double GPA;
+
 
 
         private static final String ARG_SECTION_NUMBER = "section_number";
@@ -232,6 +239,12 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
         {
             major = maj;
         }
+
+        public double getGPA()
+        {
+            return GPA;
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -252,6 +265,8 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             }
 
             initialize();
+
+            GPA = 0.0;
 
             /*
             //credits button
@@ -358,7 +373,8 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             {
                 s = new Schedule(database);
                 makeButtons(s.getSchedule());
-                gpaText.setText("GPA: "+s.calcGPA());
+                GPA = s.calcGPA();
+                gpaText.setText("GPA: "+ GPA);
             }
 
 
@@ -657,7 +673,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
             }else if(semester%3==1){	txt = "Spring Semester "  + c;	}
             else { txt = "Summer Semester "+c; }
             TextView t = new TextView(getActivity());
-            t.setPadding(75, 0, 0, 0);
+            t.setPadding(175, 0, 0, 0);
             t.setGravity(Gravity.CENTER);
             t.setTextColor(Color.parseColor("#CDC092"));
             t.setText(txt);
