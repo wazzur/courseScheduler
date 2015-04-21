@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffffffff"
+    android:weightSum="1">
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="263dp"
+        android:id="@+id/navList"
+        android:choiceMode="singleChoice"
+        android:divider="@android:color/black"
+        android:dividerHeight="1dp" />
+
+    <ExpandableListView
+        android:layout_width="match_parent"
+        android:layout_height="109dp"
+        android:id="@+id/currentSchedule"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1.01"
+        android:choiceMode="singleChoice" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="66dp"
+        android:text="Generate Schedule"
+        android:id="@+id/button"
+        android:background="#ff57d01c"
+        android:textColor="#ffffffff"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+</LinearLayout>
