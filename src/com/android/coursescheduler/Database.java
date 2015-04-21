@@ -375,6 +375,10 @@ public class Database extends SQLiteOpenHelper {
                   course.setPrereqs(getPrereqs(course.getCode()));
                   course.setSemester(cursor.getString(cursor.getColumnIndex("c_semester")));
               }
+
+              if(cursor != null) {
+                  cursor.close();
+              }
           }
           else
           {
@@ -384,6 +388,7 @@ public class Database extends SQLiteOpenHelper {
               course.setCode("C");
               course.setCourseGroup(course_group[1]);
           }
+
 
       }
 	  
@@ -404,11 +409,19 @@ public class Database extends SQLiteOpenHelper {
               if (cursor.getCount() != 0)
               {
                   cursor.moveToFirst();
-                  return cursor.getString(cursor.getColumnIndex("pk_major"));
+                  String strReturn = cursor.getString(cursor.getColumnIndex("pk_major"));
+                  if(cursor != null) {
+                      cursor.close();
+                  }
+                  return strReturn;
               }
               else {
                   return "FAILED";
               }
+          }
+
+          if(cursor != null) {
+              cursor.close();
           }
 
           return "FAILED";
@@ -428,6 +441,10 @@ public class Database extends SQLiteOpenHelper {
 	    	  res.moveToNext();
 	    	  majors[i] = res.getString(res.getColumnIndex("_id"));
 	      }
+
+          if(res != null) {
+              res.close();
+          }
 	      return Integer.valueOf(majors[0]);
 	   }
 	  
@@ -445,7 +462,11 @@ public class Database extends SQLiteOpenHelper {
 	    	  res.moveToNext();
 	    	  majors[i] = res.getString(res.getColumnIndex("NAME"));
 	      }
-	      
+
+          if(res != null) {
+              res.close();
+          }
+
 	      return majors;
 	   }
 	  
@@ -465,6 +486,10 @@ public class Database extends SQLiteOpenHelper {
 	    	  res.moveToNext();
 	    	  courses[i] = res.getString(res.getColumnIndex("CODE"));
 	      }
+
+          if(res != null) {
+              res.close();
+          }
 	      return courses[0];
 	   }
 
@@ -483,7 +508,11 @@ public class Database extends SQLiteOpenHelper {
 	    	  res.moveToNext();
 	    	  courses[i] = res.getString(res.getColumnIndex("NAME"));
 	      }
-	      
+
+          if(res != null) {
+              res.close();
+          }
+
 	      return courses;
 	  }
 
@@ -512,6 +541,11 @@ public class Database extends SQLiteOpenHelper {
               course_data[1] = cursor.getString(cursor.getColumnIndex("c_course_group"));
               courses.add(course_data);
           }
+
+          if(cursor != null) {
+              cursor.close();
+          }
+
           return courses;
       }
 
@@ -554,6 +588,11 @@ public class Database extends SQLiteOpenHelper {
                     cursor.moveToNext();
               }
           }
+
+          if(cursor != null) {
+              cursor.close();
+          }
+
           return courses;
       }
 
@@ -581,9 +620,18 @@ public class Database extends SQLiteOpenHelper {
 
                   if(checkScheduleEligibility(course, semester_count)) {
                       courses.add(course);
+
+                      if(cursor != null) {
+                          cursor.close();
+                      }
+
                       return courses;
                   }
               }
+          }
+
+          if(cursor != null) {
+              cursor.close();
           }
           return courses;
       }
@@ -600,6 +648,10 @@ public class Database extends SQLiteOpenHelper {
               cursor.moveToFirst();
               int semester = Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_semester")));
 
+              if(cursor != null) {
+                  cursor.close();
+              }
+
               if(semester%3 == 0)
                   return "fall";
               else if(semester%3 == 1)
@@ -608,6 +660,9 @@ public class Database extends SQLiteOpenHelper {
                   return "summer";
           }
           else
+          if(cursor != null) {
+              cursor.close();
+          }
               return "failed";
       }
 
@@ -621,9 +676,17 @@ public class Database extends SQLiteOpenHelper {
           if(cursor != null && cursor.getCount() > 0)
           {
               cursor.moveToFirst();
-              return Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_semester")));
+
+              int intReturn = Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_semester")));
+              if(cursor != null) {
+                  cursor.close();
+              }
+              return intReturn;
           }
           else
+              if(cursor != null) {
+                  cursor.close();
+              }
               return -1;
       }
       public int getCredits(String fk_course_id)
@@ -633,7 +696,11 @@ public class Database extends SQLiteOpenHelper {
           Cursor cursor =  db.rawQuery( "SELECT i_credits FROM COURSES WHERE pk_course_id = ?;", pk_course_id);
           cursor.moveToFirst();
 
-          return Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_credits")));
+          int intReturn = Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_credits")));
+          if(cursor != null) {
+              cursor.close();
+          }
+          return intReturn;
       }
 
       public String getCourseName(String fk_course_id)
@@ -643,7 +710,11 @@ public class Database extends SQLiteOpenHelper {
          Cursor cursor =  db.rawQuery( "SELECT c_course_name FROM COURSES WHERE pk_course_id = ?;", pk_course_id);
          cursor.moveToFirst();
 
-         return cursor.getString(cursor.getColumnIndex("c_course_name"));
+          String strReturn = cursor.getString(cursor.getColumnIndex("c_course_name"));
+          if(cursor != null) {
+              cursor.close();
+          }
+         return strReturn;
       }
 
       public int getSemesterCount()
@@ -652,7 +723,11 @@ public class Database extends SQLiteOpenHelper {
           Cursor cursor = db.rawQuery("SELECT MAX(i_semester) as i_semester FROM SCHEDULE", null);
           cursor.moveToFirst();
 
-          return Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_semester")));
+          int intReturn = Integer.parseInt(cursor.getString(cursor.getColumnIndex("i_semester")));
+          if(cursor != null) {
+              cursor.close();
+          }
+          return intReturn;
       }
 
       public String getSemester(String fk_course_id)
@@ -662,7 +737,12 @@ public class Database extends SQLiteOpenHelper {
           Cursor cursor =  db.rawQuery( "SELECT c_semester FROM COURSES WHERE pk_course_id = ?;", pk_course_id);
           cursor.moveToFirst();
 
-          return cursor.getString(cursor.getColumnIndex("c_semester"));
+
+          String strReturn = cursor.getString(cursor.getColumnIndex("c_semester"));
+          if(cursor != null) {
+              cursor.close();
+          }
+          return strReturn;
       }
 
       public ArrayList<Class> getScheduledClasses()
@@ -688,6 +768,9 @@ public class Database extends SQLiteOpenHelper {
               }
           }
 
+          if(cursor != null) {
+              cursor.close();
+          }
           return courses;
       }
 
@@ -726,6 +809,10 @@ public class Database extends SQLiteOpenHelper {
               }
 
               schedule[i] = semester;
+
+              if(cursor != null) {
+                  cursor.close();
+              }
           }
 
           return schedule;
@@ -746,9 +833,15 @@ public class Database extends SQLiteOpenHelper {
                   courses[i] = cursor.getString(cursor.getColumnIndex("fk_prereq_id"));
               }
 
+              if(cursor != null) {
+                  cursor.close();
+              }
               return courses;
           }
           else
+              if(cursor != null) {
+                  cursor.close();
+              }
               return new String[]{"none"};
 	  }
 	  
@@ -768,10 +861,15 @@ public class Database extends SQLiteOpenHelper {
                   courses[i] = cursor.getString(cursor.getColumnIndex("fk_coreq_id"));
               }
 
-
+              if(cursor != null) {
+                  cursor.close();
+              }
               return courses;
           }
           else {
+              if(cursor != null) {
+                  cursor.close();
+              }
               return new String[]{"none"};
           }
 	  }
@@ -783,7 +881,12 @@ public class Database extends SQLiteOpenHelper {
           Cursor cursor = db.rawQuery("SELECT pk_schedule FROM SCHEDULE where fk_course_id = ?;", fk_course_id);
 
           cursor.moveToFirst();
-          return Integer.parseInt(cursor.getString(cursor.getColumnIndex("pk_schedule")));
+
+          int intReturn = Integer.parseInt(cursor.getString(cursor.getColumnIndex("pk_schedule")));
+          if(cursor != null) {
+              cursor.close();
+          }
+          return intReturn;
       }
 
       public void clearSchedule()
@@ -832,6 +935,10 @@ public class Database extends SQLiteOpenHelper {
 
               if(cursor.getCount() > 0)
                   eligible = false;
+
+              if(cursor != null) {
+                  cursor.close();
+              }
           }
           else
           {
@@ -839,6 +946,10 @@ public class Database extends SQLiteOpenHelper {
 
               if(cursor.getCount() < 1)
                   eligible = true;
+
+              if(cursor != null) {
+                  cursor.close();
+              }
           }
 
           return eligible;
@@ -854,10 +965,18 @@ public class Database extends SQLiteOpenHelper {
           if(cursor != null && cursor.getCount() > 0)
           {
               cursor.moveToFirst();
-              return cursor.getString(cursor.getColumnIndex("c_course_group"));
+
+              String strReturn = cursor.getString(cursor.getColumnIndex("c_course_group"));
+              if(cursor != null) {
+                  cursor.close();
+              }
+              return strReturn;
           }
           else
           {
+              if(cursor != null) {
+                  cursor.close();
+              }
               return "none";
           }
 
@@ -869,10 +988,18 @@ public class Database extends SQLiteOpenHelper {
           String[] c_course_group = {"%" + course_group + "%"};
           Cursor cursor = db.rawQuery("SELECT * FROM COURSES WHERE c_course_group LIKE ?;", c_course_group);
 
-          if(cursor.getCount() > 0)
+          if(cursor.getCount() > 0) {
+              if (cursor != null) {
+                  cursor.close();
+              }
               return true;
-          else
+          }
+          else {
+              if (cursor != null) {
+                  cursor.close();
+              }
               return false;
+          }
       }
 
       public void setTakenAndGrade(Class course, int b_taken)
