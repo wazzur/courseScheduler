@@ -776,6 +776,16 @@ public class Database extends SQLiteOpenHelper {
           }
 	  }
 
+      public int getPkSchedule(Class c)
+      {
+          SQLiteDatabase db = this.getReadableDatabase();
+          String[] fk_course_id = {c.getCode()};
+          Cursor cursor = db.rawQuery("SELECT pk_schedule FROM SCHEDULE where fk_course_id = ?;", fk_course_id);
+
+          cursor.moveToFirst();
+          return Integer.parseInt(cursor.getString(cursor.getColumnIndex("pk_schedule")));
+      }
+
       public void clearSchedule()
       {
           SQLiteDatabase db = this.getReadableDatabase();
@@ -787,16 +797,16 @@ public class Database extends SQLiteOpenHelper {
       {
           SQLiteDatabase db = this.getReadableDatabase();
 
+          String[] fk_course_id = {course.getCode()};
           String[] prereqs = course.getPrereqs();
           String[] parameters = new String[prereqs.length * 2 + 1];
           String fk_prereqs = "' '";
           String where_in = " ";
           boolean eligible = false;
 
-          if(prereqs.length > 0)
+
+          if(prereqs.length > 0 && !prereqs[0].equals("none"))
           {
-              if(prereqs[0].equals("none"))
-                  return true;
 
               parameters[0] = "C|" + getCourseGroup(prereqs[0]);
               parameters[1] = prereqs[0];
@@ -810,18 +820,26 @@ public class Database extends SQLiteOpenHelper {
               }
 
               parameters[parameters.length - 1] = String.valueOf(semester);
+
+              String stmt = "SELECT * FROM SCHEDULE WHERE fk_course_id IN (" + where_in + ") AND i_semester < ?;";
+
+              Cursor cursor = db.rawQuery(stmt, parameters);
+
+              if(cursor.getCount() == prereqs.length)
+                  eligible = true;
+
+              cursor = db.rawQuery("SELECT * FROM SCHEDULE WHERE fk_course_id = ?;",fk_course_id);
+
+              if(cursor.getCount() > 0)
+                  eligible = false;
           }
           else
-            return true;
+          {
+              Cursor cursor = db.rawQuery("SELECT * FROM SCHEDULE WHERE fk_course_id = ?;",fk_course_id);
 
-          String stmt = "SELECT * FROM SCHEDULE WHERE fk_course_id IN (" + where_in + ") AND i_semester < ?;";
-
-          Cursor cursor = db.rawQuery(stmt, parameters);
-
-          if(cursor.getCount() == prereqs.length)
-             eligible = true;
-          //if(cursor != null && cursor.getCount() == prereqs.length)
-          //    eligible = true;
+              if(cursor.getCount() < 1)
+                  eligible = true;
+          }
 
           return eligible;
       }

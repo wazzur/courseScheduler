@@ -1,5 +1,6 @@
 package com.android.coursescheduler;
 
+import android.database.DataSetObserver;
 import android.support.v7.app.ActionBarActivity;
 import android.app.Activity;
 import android.support.v7.app.ActionBar;
@@ -19,8 +20,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseExpandableListAdapter;
+import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Fragment used for managing interactions for and presentation of a navigation drawer.
@@ -52,6 +61,8 @@ public class NavigationDrawerFragment extends Fragment {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerListView;
+    private ExpandableListView mDrawerScheduleInfo;
+    private LinearLayout mFragmentLayout;
     private View mFragmentContainerView;
 
     private int mCurrentSelectedPosition = 0;
@@ -90,25 +101,47 @@ public class NavigationDrawerFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mDrawerListView = (ListView) inflater.inflate(
-                R.layout.fragment_navigation_drawer, container, false);
+        mFragmentLayout = (LinearLayout) inflater.inflate(
+                R.layout.fragment_navigation_drawer2, container, false);
+
+        mDrawerListView = (ListView) mFragmentLayout.findViewById(R.id.navList);
+        mDrawerScheduleInfo = (ExpandableListView) mFragmentLayout.findViewById(R.id.currentSchedule);
+
         mDrawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectItem(position);
             }
         });
+
         mDrawerListView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
+                R.layout.choose_class_row,
+                R.id.rowTextView,
                 new String[]{
                         "Choose Major",
                         "test drawer 2",
 
                 }));
-        mDrawerListView.setItemChecked(mCurrentSelectedPosition, true);
-        return mDrawerListView;
+        ArrayList<String> parent = new ArrayList<String>();
+        HashMap<String, List<String>> children = new HashMap<String, List<String>>();
+
+        parent.add("Current Scheudule Info");
+        List<String> dummy_info = new ArrayList<String>();
+        dummy_info.add("Major: Computer Science");
+        dummy_info.add("Credits Per Semester: 12");
+        dummy_info.add("Overall GPA: 4.0");
+
+        children.put(parent.get(0), dummy_info);
+
+        mDrawerScheduleInfo.setAdapter(new com.android.coursescheduler.ExpandableListAdapter(
+                getActionBar().getThemedContext(),
+                parent,
+                children
+        ));
+
+        mDrawerScheduleInfo.expandGroup(0);
+        return mFragmentLayout;
     }
 
     public boolean isDrawerOpen() {

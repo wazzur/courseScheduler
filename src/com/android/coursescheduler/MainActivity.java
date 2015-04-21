@@ -262,11 +262,12 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
         private void initialize() {
             //initialize necessary variables
             database = new Database(getActivity()); //Initialize the database
+            //database.clearTables();
             if(database.isInitialized())
                 first_time_run = false;
             else
                 first_time_run = true;
-            //database.clearTables();
+            //
             Log.e("DEBUG", "Init DB");
             try {
                 if (first_time_run)
@@ -309,6 +310,10 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
         void makeButtons(final Class[][] schedule){
             // this function/method creates the buttons for each class in our schedule
             Log.e("make buttons start", "-");
+
+            if(clearSchedule)
+                layout.removeView(tempLayout);
+
             //initializes variables
             semester = 0;
             layoutParams.setMargins(20, 20, 20, 20);
@@ -516,6 +521,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                     s.replaceChoiceClass(c, pk_schedule);
                     layout.removeView(tempLayout);
                     makeButtons(s.getSchedule());
+                    clearSchedule = true;
                     ad.cancel();
                     Log.e("DEBUG", c.getName());
                 }
@@ -526,7 +532,8 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
 
         void updateCourse(final Class c, final boolean taken)
         {
-            pk_schedule = c.getPkSchedule();
+            pk_schedule = database.getPkSchedule(c);
+            c.setPkSchedule(pk_schedule);
 
             if(taken) {
                 //this function/method creates the functionality of clicking a class button
@@ -550,6 +557,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                                       gpaText.setText("GPA: "+s.calcGPA());
                                     }
                                 makeButtons(s.getSchedule());
+                                clearSchedule = true;
                             }
                         })
                         .setNegativeButton("Cancel",
@@ -571,6 +579,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                       gpaText.setText("GPA: "+s.calcGPA());
                     }
                 makeButtons(s.getSchedule());
+                clearSchedule = true;
             }
         }
 
