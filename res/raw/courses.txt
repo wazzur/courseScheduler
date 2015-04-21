@@ -105,3 +105,8 @@ PSY4302	3	Theory and Evaluation	fall/spring	PSY3213c	none	Elective,Psychology
 PSY4604	3	History and Systems of Psychology	fall/spring	PSY2012	none	Elective,Psychology
 PSY4920	3	Reasearch Topics	fall/spring/summer	none	none	Elective,Psychology
 PSY4930	3	Special Topics in Psychology	fall/spring	PSY2012	none	Elective,Psychology
+AML2010	3	American Authors to 1875	fall/spring	none	none	Literacy
+AML2600	3	Intro To African American Literature	fall/spring/summer	none	none	Literacy
+AML3041	3	American Authors since 1875	fall/spring/summer	none	none	Literacy
+AML3311	3	Major Figures in American Literature	fall/spring/summer	none	none	Literacy
+AML3682	3	American Multi Ethnic Literature	fall/spring	none	none	Literacy
