@@ -1,0 +1,17 @@
+ENC3021
+ENC3416
+ENG3803
+ENC4942
+C	Elective,English
+C	Elective,English
+C	Elective,English
+C	Elective,English
+C	AdvancedElective,English
+C	AdvancedElective,English
+C	AdvancedElective,English
+C	ForeignLanguage1
+C	ForeignLanguage2
+C	ForeignLanguage3
+C	ComputerCompetency
+C	OralCompetency
+Minor

@@ -83,3 +83,54 @@ SYG1000	3	Introductory Sociology	fall/spring/summer	none	none	SocialScience
 SYG2010	3	Social Problems	fall/spring/summer	none	none	SocialScience
 SYO3100	3	Family Problems and Social Change	fall/spring/summer	none	none	SocialScience
 SYO3200	3	Sociology of Religion	fall/spring	none	none	SocialScience	
+ENC3021	3	Rhetoric	spring	none	none	none
+ENC3416	3	Writing and Editing in Print and Online fall/spring/summer	none none none
+ENG3803	3	History of Text Technologies	fall	none	none	none
+ENC4942	3	Internship in Editing	fall/spring/summer none	none	none
+ENG3804	3	History of Illustrated Texts	fall/spring/summer	none	none	AdvancedElective,English
+ENC4212	3	Editing Manuscripts Documents Reports	fall/spring/summer	none	none	AdvancedElective,English
+ENC4218	3	Visual Rhetoric	fall/summer	none	none	AdvancedElective,English
+ENC4404	3	Advanced Writing and Editing	fall/spring	none	none	AdvancedElective,English
+ENG4815	3	What is a Text	fall/spring/summer	none	none	AdvancedElective,English
+ENG4020	3	Rhetorical Theory and Practice	fall/spring/summer	ENC3310	none	AdvancedElective,English
+ENG4834	3	Issues in Publishing	fall/spring	none	none	AdvancedElective,English
+AML3041 3	American Authors since 1875	fall/spring/summer	none	none	Elective,English
+AML3680 3	American MultiEthnic Literature	fall/spring/summer	none	none	Elective,English
+AML3311 3	Major Figures in American literature	fall/summer	none	none	Elective,English
+AML3630 3	Latino Literature in English	fall/summer	none	none	Elective,English
+AML4111 3	The 19th century American Novel	fall/spring/summer	none	none	Elective,English
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
