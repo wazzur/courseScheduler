@@ -42,7 +42,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
     private mainFragment mainFrag;
-    private static final String[] MAJOR_NAMES = {"Computer Science", "Psychology"};
+    private static final String[] MAJOR_NAMES = {"Computer Science", "Psychology", "English"};
     private CharSequence mTitle;
     private int cred = 0;
     private String major = "Computer Science";
@@ -420,11 +420,16 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
                             else
                                 courseButton.setText(schedule[sem][course].getCode());        // sets button name to class code
 
+                            courseButton.setBackground(gDraw);                // sets background
+
+                            if(schedule[sem][course].isTaken() == 1)
+                                courseButton.setBackgroundColor(0XFFDDDCDB);
+
                             courseButton.setId(course);                        // sets button reference id
                             courseButton.setGravity(Gravity.CENTER);        // centralizes button gravity
-                            courseButton.setBackground(gDraw);                // sets background
+
                             courseButton.setMaxLines(1);
-                            row.addView(courseButton, 300, 225);            // adds button to our table row
+                            row.addView(courseButton, 500, 225);            // adds button to our table row
                             buttonCounter++;                            // incremenets button counter
 
                             // adds the row to the table
