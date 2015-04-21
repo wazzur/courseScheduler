@@ -313,6 +313,7 @@ public class MainActivity extends ActionBarActivity  implements NavigationDrawer
         private void generateSchedule()
         {
             s = new Schedule(major,database);
+            layout.removeView(tempLayout);
             makeButtons(s.makeSchedule(credits));
         }
 
