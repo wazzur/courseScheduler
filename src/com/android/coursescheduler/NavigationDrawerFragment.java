@@ -133,7 +133,7 @@ public class NavigationDrawerFragment extends Fragment {
         List<String> dummy_info = new ArrayList<String>();
         dummy_info.add("Major: ");
         dummy_info.add("Credits Per Semester: ");
-        dummy_info.add("Overall GPA: ");
+        //dummy_info.add("Overall GPA: ");
 
         children.put(parent.get(0), dummy_info);
 

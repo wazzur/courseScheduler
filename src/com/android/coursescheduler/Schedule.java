@@ -326,8 +326,10 @@ public class Schedule {
             }
         }
 
-        //if(classes.size() > 0)
-        //    classes.get(getIndex(course.getCode())).setTaken(b_taken);
+        classes = database.getScheduledClasses();
+
+        if(classes.size() > 0)
+            classes.get(getIndex(course.getCode())).setTaken(b_taken);
     }
 
     Class nextClass(Class[] semester, int semstr, int semester_count){
